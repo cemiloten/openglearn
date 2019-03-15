@@ -1,25 +1,12 @@
 #ifndef __SHADER_H__
 #define __SHADER_H__
 
-#include <glad/glad.h>
+namespace Shader
+{
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+unsigned int create(const char* vert_source, const char* frag_source);
 
-class Shader {
-public:
-    unsigned int ID;  // the program ID
+}
 
-    //TODO: take in source instead of file path -> single responsibilty
-    Shader(const char* vertexFilePath, const char* fragmentFilePath);
-
-    void Use();
-
-    void SetBool  (const std::string &name, const bool  value) const;
-    void SetInt   (const std::string &name, const int   value) const;
-    void SetFloat (const std::string &name, const float value) const;
-};
 
 #endif

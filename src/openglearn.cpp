@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <cmath>
 
-#include <shader.h>
+#include "shader.h"
+#include "fileutil.h"
 
 const unsigned int windowWidth{ 800 };
 const unsigned int windowHeight{ 600 };
@@ -11,8 +12,15 @@ const unsigned int windowHeight{ 600 };
 void framebufferSizeCallback(GLFWwindow* window, const int width, const int height);
 void processInput(GLFWwindow* window);
 
-// TODO: debug passing vertex color to vert frag
+// TODO: reading from file gives weird value
+// need to do C style because that's what gl wants in glShaderSource
 int main() {
+    const char* test = "abjkcjkfldsajl";
+    const char* test2 = test;
+    const char* s = FileUtil::get_file_content("src/shaders/testShader.vert");
+
+    return 0;
+
     if (!glfwInit()) {
         return -1;
     }
@@ -39,7 +47,7 @@ int main() {
         return -1;
     }
 
-    Shader testShader{ "src/shaders/testShader.vert", "src/shaders/testShader.frag" };
+    unsigned int shader = Shader::create("src/shaders/testShader.vert", "src/shaders/testShader.frag");
 
     float vertices[] {
         // positions         // colors
@@ -87,7 +95,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
 
-        testShader.Use();
+        glUseProgram(shader);
         // testShader.setFloat("ourColor", 1.0f);
 
         // float timeValue = (float)glfwGetTime();
@@ -108,12 +116,14 @@ int main() {
     return 0;
 }
 
-void framebufferSizeCallback(GLFWwindow* window, const int width, const int height) {
+void framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
+{
     // Match new dimensions
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window)
+{
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
