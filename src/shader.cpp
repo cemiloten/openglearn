@@ -5,38 +5,39 @@
 #include <iostream>
 
 #include "shader.h"
-#include "fileutil.h"
 
-unsigned int Shader::create(const char* vertPath, const char* fragPath)
+unsigned int Shader::create(const char* vert_path, const char* frag_path)
 {
+    std::string vert_source_;
+    std::string frag_source_;
+    std::ifstream vert_shader_file;
+    std::ifstream frag_shader_file;
+    vert_shader_file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+    frag_shader_file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+    try {
+        // open files
+        vert_shader_file.open(vert_path);
+        frag_shader_file.open(frag_path);
+        std::stringstream vert_shader_stream;
+        std::stringstream frag_shader_stream;
+        vert_shader_stream << vert_shader_file.rdbuf();
+        frag_shader_stream << frag_shader_file.rdbuf();
+        vert_shader_file.close();
+        frag_shader_file.close();
+        // convert stream into string
+        vert_source_ = vert_shader_stream.str();
+        frag_source_ = frag_shader_stream.str();
+    } catch(std::ifstream::failure e) {
+        std::cout << "ERROR: Shader file not successfully read" << std::endl;
+    }
+
+    const char* vert_source = vert_source_.c_str();
+    const char* frag_source = frag_source_.c_str();
     int success;
     char infoLog[512];
-    const std::string vertSource = FileUtil::get_file_content(vertPath);
-    const std::string fragSource = FileUtil::get_file_content(fragPath);
-
-    // const char* vertSource =
-    //     "#version 330 core\n"
-    //     "layout (location = 0) in vec3 pos;\n"
-    //     "layout (location = 1) in vec3 vertexColorIn;\n"
-    //     "\n"
-    //     "out vec3 vertexColor;\n"
-    //     "\n"
-    //     "void main() {\n"
-    //         "gl_Position = vec4(pos, 1.0);\n"
-    //         "vertexColor = vertexColorIn;\n"
-    //     "}\n";
-
-    // const char* fragSource =
-    //     "#version 330 core\n"
-    //     "out vec4 fragColor;\n"
-    //     "in vec3 vertexColor;\n"
-    //     "\n"
-    //     "void main() {\n"
-    //         "fragColor = vec4(vertexColor, 1.0);\n"
-    //     "}\n";
 
     unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, (const GLchar* const*)&vertSource, NULL);
+    glShaderSource(vertex, 1, &vert_source, NULL);
     glCompileShader(vertex);
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -45,7 +46,7 @@ unsigned int Shader::create(const char* vertPath, const char* fragPath)
     }
 
     unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, (const GLchar* const*)fragSource, NULL);
+    glShaderSource(fragment, 1, &frag_source, NULL);
     glCompileShader(fragment);
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if (!success) {

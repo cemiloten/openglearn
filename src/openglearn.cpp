@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include "shader.h"
-#include "fileutil.h"
 
 const unsigned int windowWidth{ 800 };
 const unsigned int windowHeight{ 600 };
@@ -15,12 +14,6 @@ void processInput(GLFWwindow* window);
 // TODO: reading from file gives weird value
 // need to do C style because that's what gl wants in glShaderSource
 int main() {
-    const char* test = "abjkcjkfldsajl";
-    const char* test2 = test;
-    const char* s = FileUtil::get_file_content("src/shaders/testShader.vert");
-
-    return 0;
-
     if (!glfwInit()) {
         return -1;
     }
@@ -47,7 +40,9 @@ int main() {
         return -1;
     }
 
-    unsigned int shader = Shader::create("src/shaders/testShader.vert", "src/shaders/testShader.frag");
+    unsigned int shader = Shader::create(
+        "src/shaders/testShader.vert",
+        "src/shaders/testShader.frag");
 
     float vertices[] {
         // positions         // colors
