@@ -71,14 +71,22 @@ unsigned int Shader::create(const char* vert_path, const char* frag_path)
     return shader_id;
 }
 
-// void Shader::SetBool(const std::string &name, const bool value) const {
-//     glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
-// }
+void Shader::use(const unsigned int id)
+{
+    glUseProgram(id);
+}
 
-// void Shader::SetInt(const std::string &name, const int value) const {
-//     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
-// }
+void Shader::set_bool(const unsigned int id, const std::string& param, const bool value)
+{
+    glUniform1i(glGetUniformLocation(id, param.c_str()), (int)value);
+}
 
-// void Shader::SetFloat(const std::string &name, const float value) const {
-//     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-// }
+void Shader::set_int(const unsigned int id, const std::string& param, const int value)
+{
+    glUniform1i(glGetUniformLocation(id, param.c_str()), value);
+}
+
+void Shader::set_float(const unsigned int id, const std::string& param, const float value)
+{
+    glUniform1f(glGetUniformLocation(id, param.c_str()), value);
+}

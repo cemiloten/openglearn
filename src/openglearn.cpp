@@ -90,7 +90,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
 
-        glUseProgram(shader);
+        Shader::use(shader);
+        Shader::set_float(shader, "h_offset", 0.4f);
         // testShader.setFloat("ourColor", 1.0f);
 
         // float timeValue = (float)glfwGetTime();
