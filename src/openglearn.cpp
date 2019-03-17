@@ -1,18 +1,19 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <cmath>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 #include "shader.h"
 
 const unsigned int windowWidth{ 800 };
 const unsigned int windowHeight{ 600 };
 
-void framebufferSizeCallback(GLFWwindow* window, const int width, const int height);
-void processInput(GLFWwindow* window);
+void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
+void process_input(GLFWwindow* window);
 
-// TODO: reading from file gives weird value
-// need to do C style because that's what gl wants in glShaderSource
 int main() {
     if (!glfwInit()) {
         return -1;
@@ -32,7 +33,7 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 
     // glad: load OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -40,16 +41,36 @@ int main() {
         return -1;
     }
 
-    unsigned int shader = Shader::create(
-        "src/shaders/testShader.vert",
-        "src/shaders/testShader.frag");
+    unsigned int shader = Shader::create("src/shaders/testShader.vert",
+                                         "src/shaders/testShader.frag");
 
     float vertices[] {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f
+        // positions         // colors            // uv coords
+         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.5f, 1.0f
     };
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int tex_width;
+    int tex_height;
+    int normal_channels;
+    const char* tex_path = "data/textures/wall.jpg";
+    unsigned char* tex_data = stbi_load(tex_path, &tex_width, &tex_height, &normal_channels, 0);
+    if (tex_data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex_data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        printf("Failed to load texture %s\n", tex_path);
+    }
+    stbi_image_free(tex_data);
 
     // unsigned int indices[6] {
     //     0, 1, 3,
@@ -69,12 +90,13 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // set the vertex attributes pointers
-    // positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    // vertex data [pos, pos, pos, col, col, col, uv, uv]
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // colors
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // unbind our data from buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -84,7 +106,7 @@ int main() {
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
-        processInput(window);
+        process_input(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -99,6 +121,7 @@ int main() {
         // int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
         // glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
+        glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -112,13 +135,12 @@ int main() {
     return 0;
 }
 
-void framebufferSizeCallback(GLFWwindow* window, const int width, const int height)
+void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height)
 {
-    // Match new dimensions
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height); // Match new dimensions
 }
 
-void processInput(GLFWwindow* window)
+void process_input(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
