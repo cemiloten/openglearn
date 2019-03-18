@@ -14,11 +14,12 @@
 
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
-float blending{ 0.0f };
+float blending{ 0.5f };
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
 
+// TODO: for some reason the second texture does not show on mac
 int main()
 {
     if (!glfwInit()) {
@@ -47,8 +48,9 @@ int main()
         return -1;
     }
 
-    unsigned int shader = Shader::create("src/shaders/testShader.vert",
-                                         "src/shaders/testShader.frag");
+    unsigned int shader = Shader::create(
+        "src/shaders/testShader.vert",
+        "src/shaders/testShader.frag");
 
     float vertices[] {
         // positions         // colors            // uv coords
@@ -87,20 +89,28 @@ int main()
     glEnableVertexAttribArray(2);
 
     // texture stuff
-    unsigned int texture1;
-    unsigned int texture2;
-    const char* tex_path1 = "data/textures/wall.jpg";
-    const char* tex_path2 = "data/textures/smiley.png";
+    unsigned int texture1, texture2;
+    char const* tex_path1 = "data/textures/wall.jpg";
+    char const* tex_path2 = "data/textures/smiley.png";
+
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     int tex_width, tex_height, normal_channels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char* tex_data = stbi_load(tex_path1, &tex_width, &tex_height, &normal_channels, 0);
     if (tex_data) {
+        for (size_t i = 0; i < 40; i++) {
+            std::cout << *tex_data + i << " ";
+            if (i == 39 || (i > 0 && i % 10 == 0)) {
+                std::cout << std::endl;
+            }
+        }
+        std::cout << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex_data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -115,6 +125,13 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     tex_data = stbi_load(tex_path2, &tex_width, &tex_height, &normal_channels, 0);
     if (tex_data) {
+        for (size_t i = 0; i < 40; i++) {
+            std::cout << *tex_data + i << " ";
+            if (i == 39 || (i > 0 && i % 10 == 0)) {
+                std::cout << std::endl;
+            }
+        }
+        std::cout << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -123,19 +140,18 @@ int main()
 
     stbi_image_free(tex_data);
 
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::scale(trans, glm::vec3(0.5f));
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
     // unbind our data from buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE or GL_FILL
+    glm::mat4 trans = glm::mat4(1.0f);
+
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
+
+        trans = glm::rotate(trans, glm::radians(0.01f), glm::vec3(0.0f, 0.0f, 1.0f));
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -146,16 +162,15 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        int transform_location = glGetUniformLocation(shader, "transform");
-        int blending_location = glGetUniformLocation(shader, "blending");
         Shader::use(shader);
-        // TODO: here
-        glUniformMatrix4fv(transform_location, 1, GL_FALSE, glm::value_ptr(trans));
+        glUniformMatrix4fv(glGetUniformLocation(shader, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
+        glUniform1f(glGetUniformLocation(shader, "blending"), blending);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
     }
 
     glDeleteVertexArrays(1, &vao);
@@ -174,14 +189,13 @@ void frame_buffer_size_callback(GLFWwindow* window, const int width, const int h
 void process_input(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        // blending
         blending += 0.01f;
         if (blending > 1.0f) {
             blending = 1.0f;
         }
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        blending -= 0.01f;   // blending
+        blending -= 0.01f;
         if (blending < 0.0f) {
             blending = 0.0f;
         }
