@@ -1,10 +1,14 @@
 #include <stdio.h>
 #include <cmath>
+#include <iostream>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
 
@@ -119,6 +123,9 @@ int main()
 
     stbi_image_free(tex_data);
 
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::scale(trans, glm::vec3(0.5f));
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     // unbind our data from buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -139,12 +146,11 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        int transform_location = glGetUniformLocation(shader, "transform");
         int blending_location = glGetUniformLocation(shader, "blending");
         Shader::use(shader);
-        glUniform1f(blending_location, blending);
-        Shader::set_int(shader, "texture1", 0);
-        Shader::set_int(shader, "texture2", 1);
-
+        // TODO: here
+        glUniformMatrix4fv(transform_location, 1, GL_FALSE, glm::value_ptr(trans));
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
