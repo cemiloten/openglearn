@@ -144,27 +144,32 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glm::mat4 trans = glm::mat4(1.0f);
+    Shader::use(shader);
+    Shader::set_int(shader, "texture1", 0);
+    Shader::set_int(shader, "texture2", 1);
+    unsigned int transform_location = glGetUniformLocation(shader, "trans");
+    unsigned int blending_location = glGetUniformLocation(shader, "blending");
 
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
-        trans = glm::rotate(trans, glm::radians(0.01f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
-
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+
         Shader::use(shader);
-        glUniformMatrix4fv(glGetUniformLocation(shader, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
-        glUniform1f(glGetUniformLocation(shader, "blending"), blending);
+        glUniformMatrix4fv(transform_location, 1, GL_FALSE, glm::value_ptr(trans));
+        glUniform1f(blending_location, blending);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
