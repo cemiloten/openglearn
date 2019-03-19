@@ -6,11 +6,13 @@ layout (location = 2) in vec2 uv_coords_in;
 out vec3 v_color;
 out vec2 uv_coords;
 
-uniform mat4 trans;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main()
 {
-    gl_Position = trans * vec4(pos, 1.0);
+    gl_Position = projection * view * model * vec4(pos, 1.0);
     v_color = v_color_in;
     uv_coords = uv_coords_in;
 }
