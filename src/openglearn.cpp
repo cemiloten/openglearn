@@ -104,13 +104,6 @@ int main()
     stbi_set_flip_vertically_on_load(true);
     unsigned char* tex_data = stbi_load(tex_path1, &tex_width, &tex_height, &normal_channels, 0);
     if (tex_data) {
-        for (size_t i = 0; i < 40; i++) {
-            std::cout << *tex_data + i << " ";
-            if (i == 39 || (i > 0 && i % 10 == 0)) {
-                std::cout << std::endl;
-            }
-        }
-        std::cout << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex_data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -125,13 +118,6 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     tex_data = stbi_load(tex_path2, &tex_width, &tex_height, &normal_channels, 0);
     if (tex_data) {
-        for (size_t i = 0; i < 40; i++) {
-            std::cout << *tex_data + i << " ";
-            if (i == 39 || (i > 0 && i % 10 == 0)) {
-                std::cout << std::endl;
-            }
-        }
-        std::cout << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -147,12 +133,8 @@ int main()
     Shader::use(shader);
     Shader::set_int(shader, "texture1", 0);
     Shader::set_int(shader, "texture2", 1);
-    unsigned int transform_location = glGetUniformLocation(shader, "trans");
-    unsigned int blending_location = glGetUniformLocation(shader, "blending");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-    // Main loop
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
@@ -168,9 +150,14 @@ int main()
         trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 
         Shader::use(shader);
-        glUniformMatrix4fv(transform_location, 1, GL_FALSE, glm::value_ptr(trans));
-        glUniform1f(blending_location, blending);
+        Shader::set_mat4(shader, "trans", trans);
+        Shader::set_float(shader, "blending", blending);
+
         glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
