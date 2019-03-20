@@ -14,7 +14,7 @@
 
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
-float blending{ 0.5f };
+
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
@@ -52,17 +52,88 @@ int main()
         "src/shaders/testShader.vert",
         "src/shaders/testShader.frag");
 
-    float vertices[] {
-        // positions          // colors            // uv coords
-         0.5f,  0.5f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
-         0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f,
-        -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f
+    // float vertices[] {
+    //     -0.5f, -0.5f, -0.5f, // 0
+    //      0.5f, -0.5f, -0.5f, // 1
+    //     -0.5f,  0.5f, -0.5f, // 2
+    //      0.5f,  0.5f, -0.5f, // 3
+    //     -0.5f, -0.5f,  0.5f, // 4
+    //      0.5f, -0.5f,  0.5f, // 5
+    //     -0.5f,  0.5f,  0.5f, // 6
+    //      0.5f,  0.5f,  0.5f, // 7
+    // };
+
+    // unsigned int indices[36] {
+    //     0, 1, 3,
+    //     0, 3, 2,
+    //     1, 5, 7,
+    //     1, 7, 3,
+    //     5, 4, 6,
+    //     5, 6, 7,
+    //     4, 0, 2,
+    //     4, 2, 6,
+    //     2, 3, 7,
+    //     2, 7, 6,
+    //     4, 5, 1,
+    //     4, 1, 0
+    // };
+
+    // float vertices[]  {
+    //     // positions          // texture coords
+    //     -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
+    //      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+    //     -0.5f,  0.5f, 0.0f,   0.0f, 1.0f, // top left
+    //      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
+    // };
+    unsigned int indices[] {
+        // 0, 1, 3, // first triangle
+        // 1, 2, 3  // second triangle
+        0, 2, 3,
+        0, 3, 1,
     };
 
-    unsigned int indices[6] {
-        0, 1, 3,
-        1, 2, 3
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     unsigned int vao, vbo, ebo;
@@ -79,14 +150,11 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // set the vertex attributes pointers
-    // vertex data layout: [pos.x, pos.y, pos.z, col.r, col.g, col.b, uv.x, uv.y]
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     // texture stuff
     unsigned int texture1, texture2;
@@ -130,21 +198,17 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
-
     Shader::use(shader);
     Shader::set_int(shader, "texture1", 0);
     Shader::set_int(shader, "texture2", 1);
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
@@ -153,13 +217,21 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         Shader::use(shader);
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view  = glm::mat4(1.0f);
+        glm::mat4 proj  = glm::mat4(1.0f);
+        // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
         Shader::set_mat4(shader, "model", model);
-        Shader::set_mat4(shader, "view", view);
-        Shader::set_mat4(shader, "view", view);
-        Shader::set_float(shader, "blending", blending);
+        Shader::set_mat4(shader, "view",  view);
+        Shader::set_mat4(shader, "proj",  proj);
+        Shader::set_float(shader, "blending", 0.5f);
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -181,18 +253,14 @@ void frame_buffer_size_callback(GLFWwindow* window, const int width, const int h
 
 void process_input(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        blending += 0.01f;
-        if (blending > 1.0f) {
-            blending = 1.0f;
-        }
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        blending -= 0.01f;
-        if (blending < 0.0f) {
-            blending = 0.0f;
-        }
-    }
+    // if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    //     model = glm::rotate(model, -0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+    //     std::cout << "rotating left" << std::endl;
+    // }
+    // if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    //     model = glm::rotate(model, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+    //     std::cout << "rotating right" << std::endl;
+    // }
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
