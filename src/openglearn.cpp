@@ -15,11 +15,11 @@
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
 
+glm::mat4 view  = glm::mat4(1.0f);
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
 
-// TODO: for some reason the second texture does not show on mac
 int main()
 {
     if (!glfwInit()) {
@@ -52,32 +52,6 @@ int main()
         "src/shaders/testShader.vert",
         "src/shaders/testShader.frag");
 
-    // float vertices[] {
-    //     -0.5f, -0.5f, -0.5f, // 0
-    //      0.5f, -0.5f, -0.5f, // 1
-    //     -0.5f,  0.5f, -0.5f, // 2
-    //      0.5f,  0.5f, -0.5f, // 3
-    //     -0.5f, -0.5f,  0.5f, // 4
-    //      0.5f, -0.5f,  0.5f, // 5
-    //     -0.5f,  0.5f,  0.5f, // 6
-    //      0.5f,  0.5f,  0.5f, // 7
-    // };
-
-    // unsigned int indices[36] {
-    //     0, 1, 3,
-    //     0, 3, 2,
-    //     1, 5, 7,
-    //     1, 7, 3,
-    //     5, 4, 6,
-    //     5, 6, 7,
-    //     4, 0, 2,
-    //     4, 2, 6,
-    //     2, 3, 7,
-    //     2, 7, 6,
-    //     4, 5, 1,
-    //     4, 1, 0
-    // };
-
     // float vertices[]  {
     //     // positions          // texture coords
     //     -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
@@ -85,6 +59,7 @@ int main()
     //     -0.5f,  0.5f, 0.0f,   0.0f, 1.0f, // top left
     //      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
     // };
+
     unsigned int indices[] {
         // 0, 1, 3, // first triangle
         // 1, 2, 3  // second triangle
@@ -204,12 +179,30 @@ int main()
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_DEPTH_TEST);
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    glm::mat4 proj  = glm::mat4(1.0f);
+    proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
 
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -217,20 +210,21 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         Shader::use(shader);
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view  = glm::mat4(1.0f);
-        glm::mat4 proj  = glm::mat4(1.0f);
-        // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
-        Shader::set_mat4(shader, "model", model);
         Shader::set_mat4(shader, "view",  view);
         Shader::set_mat4(shader, "proj",  proj);
         Shader::set_float(shader, "blending", 0.5f);
 
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for (unsigned int i = 0; i < 10; ++i) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            if (i % 2 == 0) {
+                float angle = 20.0f * i;
+                model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            }
+            Shader::set_mat4(shader, "model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
@@ -253,14 +247,18 @@ void frame_buffer_size_callback(GLFWwindow* window, const int width, const int h
 
 void process_input(GLFWwindow* window)
 {
-    // if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-    //     model = glm::rotate(model, -0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
-    //     std::cout << "rotating left" << std::endl;
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-    //     model = glm::rotate(model, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
-    //     std::cout << "rotating right" << std::endl;
-    // }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        view = glm::rotate(view, -0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        view = glm::rotate(view,  0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        view = glm::rotate(view,  0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        view = glm::rotate(view, -0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
