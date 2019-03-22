@@ -15,7 +15,7 @@
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
 
-glm::mat4 view  = glm::mat4(1.0f);
+glm::mat4 view = glm::mat4(1.0f);
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
@@ -33,7 +33,7 @@ int main()
 #endif
 
     // Window
-    GLFWwindow *window = glfwCreateWindow(window_width, window_height, "openGLearn", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(window_width, window_height, "openGLearn", NULL, NULL);
     if (window == NULL) {
         printf("Error creating window\n");
         glfwTerminate();
@@ -49,8 +49,8 @@ int main()
     }
 
     unsigned int shader = Shader::create(
-        "src/shaders/testShader.vert",
-        "src/shaders/testShader.frag");
+        "data/shaders/testShader.vert",
+        "data/shaders/testShader.frag");
 
     // float vertices[]  {
     //     // positions          // texture coords
@@ -194,7 +194,14 @@ int main()
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    // glm::vec3 world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+    // glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    // glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, 0.0f);
+    // glm::vec3 camera_direction = glm::normalize(camera_pos - camera_target);
+    // glm::vec3 camera_right = glm::normalize(glm::cross(world_up, camera_direction));
+    // glm::vec3 camera_up = glm::normalize(glm::cross(camera_direction, camera_right));
+
+    // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     glm::mat4 proj  = glm::mat4(1.0f);
     proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
 
@@ -215,6 +222,14 @@ int main()
         Shader::set_float(shader, "blending", 0.5f);
 
         glBindVertexArray(vao);
+        float radius = 10.0f;
+        float cam_x = (float)std::sin(glfwGetTime()) * radius;
+        float cam_z = (float)std::cos(glfwGetTime()) * radius;
+        glm::mat4 view = glm::lookAt(
+            glm::vec3(cam_x, 0.0f, cam_z),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f));
+
         for (unsigned int i = 0; i < 10; ++i) {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
