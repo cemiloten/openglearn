@@ -12,7 +12,7 @@ Model::Model(const char* filename)
 {
     std::ifstream in;
     in.open(filename, std::ifstream::in);
-    if (in.fail()) {
+    if (in.bad() || in.fail) {
         std::cerr << "Failed to open " << filename << std::endl;
         return;
     }
@@ -20,9 +20,6 @@ Model::Model(const char* filename)
     std::string line;
     while (!in.eof()) {
         std::getline(in, line);
-        if (line == "") {
-            continue;
-        }
         std::istringstream iss(line.c_str());
         char trash;
         if (line.compare(0, 2, "v ") == 0) {

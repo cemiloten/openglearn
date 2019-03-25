@@ -76,62 +76,62 @@ void Shader::use(const unsigned int id)
     glUseProgram(id);
 }
 
-void Shader::set_bool(const unsigned int id, const std::string &param, const bool value)
+void Shader::set_bool(const unsigned int id, const std::string& param, const bool value)
 {
     glUniform1i(glGetUniformLocation(id, param.c_str()), (int)value);
 }
 
-void Shader::set_int(const unsigned int id, const std::string &param, const int value)
+void Shader::set_int(const unsigned int id, const std::string& param, const int value)
 {
     glUniform1i(glGetUniformLocation(id, param.c_str()), value);
 }
 
-void Shader::set_float(const unsigned int id, const std::string &param, const float value)
+void Shader::set_float(const unsigned int id, const std::string& param, const float value)
 {
     glUniform1f(glGetUniformLocation(id, param.c_str()), value);
 }
 
-void Shader::set_vec2(const unsigned int id, const std::string &param, const glm::vec2 &value)
+void Shader::set_vec2(const unsigned int id, const std::string& param, const glm::vec2& value)
 {
     glUniform2fv(glGetUniformLocation(id, param.c_str()), 1, &value[0]);
 }
 
-void Shader::set_vec2(const unsigned int id, const std::string &param, const float x, const float y)
+void Shader::set_vec2(const unsigned int id, const std::string& param, const float x, const float y)
 {
     glUniform2f(glGetUniformLocation(id, param.c_str()), x, y);
 }
 
-void Shader::set_vec3(const unsigned int id, const std::string &param, const glm::vec3& value)
+void Shader::set_vec3(const unsigned int id, const std::string& param, const glm::vec3& value)
 {
     glUniform3fv(glGetUniformLocation(id, param.c_str()), 1, &value[0]);
 }
 
-void Shader::set_vec3(const unsigned int id, const std::string &param, const float x, const float y, const float z)
+void Shader::set_vec3(const unsigned int id, const std::string& param, const float x, const float y, const float z)
 {
     glUniform3f(glGetUniformLocation(id, param.c_str()), x, y, z);
 }
 
-void Shader::set_vec4(const unsigned int id, const std::string &param, const glm::vec4& value)
+void Shader::set_vec4(const unsigned int id, const std::string& param, const glm::vec4& value)
 {
     glUniform4fv(glGetUniformLocation(id, param.c_str()), 1, &value[0]);
 }
 
-void Shader::set_vec4(const unsigned int id, const std::string &param, const float x, const float y, const float z, const float w)
+void Shader::set_vec4(const unsigned int id, const std::string& param, const float x, const float y, const float z, const float w)
 {
     glUniform4f(glGetUniformLocation(id, param.c_str()), x, y, z, w);
 }
 
-void Shader::set_mat2(const unsigned int id, const std::string &param, const glm::mat2 &mat)
+void Shader::set_mat2(const unsigned int id, const std::string& param, const glm::mat2& mat)
 {
     glUniformMatrix2fv(glGetUniformLocation(id, param.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::set_mat3(const unsigned int id, const std::string &param, const glm::mat3 &mat)
+void Shader::set_mat3(const unsigned int id, const std::string& param, const glm::mat3& mat)
 {
     glUniformMatrix3fv(glGetUniformLocation(id, param.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-void Shader::set_mat4(const unsigned int id, const std::string &param, const glm::mat4 &mat)
+void Shader::set_mat4(const unsigned int id, const std::string& param, const glm::mat4 &mat)
 {
     glUniformMatrix4fv(glGetUniformLocation(id, param.c_str()), 1, GL_FALSE, &mat[0][0]);
 }

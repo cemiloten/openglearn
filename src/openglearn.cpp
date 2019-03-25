@@ -4,14 +4,13 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
 #include "model.h"
+#include "texture.h"
 
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
@@ -24,8 +23,8 @@ void process_input(GLFWwindow* window);
 int main()
 {
     Model m("data/models/cube.obj");
+    std::cout << "ok" << std::endl;
     return 0;
-
     if (!glfwInit()) {
         return -1;
     }
@@ -55,17 +54,7 @@ int main()
         "data/shaders/testShader.vert",
         "data/shaders/testShader.frag");
 
-    // float vertices[]  {
-    //     // positions          // texture coords
-    //     -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
-    //      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-    //     -0.5f,  0.5f, 0.0f,   0.0f, 1.0f, // top left
-    //      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-    // };
-
     unsigned int indices[] {
-        // 0, 1, 3, // first triangle
-        // 1, 2, 3  // second triangle
         0, 2, 3,
         0, 3, 1,
     };
@@ -134,51 +123,9 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // texture stuff
-    unsigned int texture1, texture2;
-    char const* tex_path1 = "data/textures/wall.jpg";
-    char const* tex_path2 = "data/textures/smiley.png";
-
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int tex_width, tex_height, normal_channels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* tex_data = stbi_load(tex_path1, &tex_width, &tex_height, &normal_channels, 0);
-    if (tex_data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex_data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        printf("Failed to load texture1%s\n", tex_path1);
-    }
-
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    tex_data = stbi_load(tex_path2, &tex_width, &tex_height, &normal_channels, 0);
-    if (tex_data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        printf("Failed to load texture2%s\n", tex_path2);
-    }
-
-    stbi_image_free(tex_data);
-
     // unbind our data from buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    Shader::use(shader);
-    Shader::set_int(shader, "texture1", 0);
-    Shader::set_int(shader, "texture2", 1);
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
@@ -196,6 +143,13 @@ int main()
         glm::vec3( 1.5f,  0.2f, -1.5f),
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
+
+    GLuint texture1 = Texture::load("data/textures/wall.jpg");
+    GLuint texture2 = Texture::load("data/textures/smiley.png");
+
+    Shader::use(shader);
+    Shader::set_int(shader, "texture1", 0);
+    Shader::set_int(shader, "texture2", 1);
 
     // glm::vec3 world_up = glm::vec3(0.0f, 1.0f, 0.0f);
     // glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
