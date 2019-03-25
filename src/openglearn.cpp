@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
+#include "model.h"
 
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
@@ -22,6 +23,9 @@ void process_input(GLFWwindow* window);
 
 int main()
 {
+    Model m("data/models/cube.obj");
+    return 0;
+
     if (!glfwInit()) {
         return -1;
     }
@@ -32,7 +36,6 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // Window
     GLFWwindow* window = glfwCreateWindow(window_width, window_height, "openGLearn", NULL, NULL);
     if (window == NULL) {
         printf("Error creating window\n");
@@ -42,7 +45,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 
-    // glad: load OpenGL function pointers
+    // load OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         printf("Failed to initialize GLAD\n");
         return -1;
@@ -177,9 +180,9 @@ int main()
     Shader::set_int(shader, "texture1", 0);
     Shader::set_int(shader, "texture2", 1);
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glm::vec3 cubePositions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f),

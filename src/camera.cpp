@@ -1,9 +1,6 @@
 #include "camera.h"
 
-Camera::Camera(
-    glm::vec3 _position,
-    glm::vec3 _up,
-    glm::vec3 _front)
+Camera::Camera(glm::vec3 _position, glm::vec3 _up, glm::vec3 _front)
         : position (_position)
         , up       (_up)
         , front    (_front)
