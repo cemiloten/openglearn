@@ -1,18 +1,14 @@
 #pragma once
 
-enum ComponentType
+enum class ComponentType : unsigned int
 {
-    CompTypeNone      = 0,
-    CompTypePosition  = 1 << 0,
-    CompTypeRotation  = 1 << 1,
-    // = 1 << 2,
-    // = 1 << 3,
-    // = 1 << 4,
-    // = 1 << 5,
-    // = 1 << 6,
+    None       = 0,
+    Transform  = 1 << 0,
+    Mesh       = 1 << 1,
 };
 
 struct Component
 {
-    virtual ComponentType GetType() = 0;
+public:
+    virtual ComponentType get_type() const = 0;
 };

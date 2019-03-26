@@ -8,23 +8,36 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "world.h"
+#include "camera.h"
 #include "shader.h"
-#include "model.h"
 #include "texture.h"
+#include "obj_parser.h"
+#include "vao.h"
 
 const unsigned int window_width{ 800 };
 const unsigned int window_height{ 600 };
-
-glm::mat4 view = glm::mat4(1.0f);
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
 
 int main()
 {
-    Model m("data/models/cube.obj");
+    Mesh m;
+    ObjParser::parse("data/models/cube.obj", m);
+
+    // TODO: next
+    // GLuint vao = VAO::from_mesh(m);
     std::cout << "ok" << std::endl;
     return 0;
+
+
+
+
+
+
+
+
     if (!glfwInit()) {
         return -1;
     }
@@ -50,58 +63,32 @@ int main()
         return -1;
     }
 
+    Mesh* box = new Mesh();
+    World world(10);
+
+    unsigned int camera;
+    if (!world.create_entity(camera)) {
+        return -1;
+    }
+    world.add_component(camera, ComponentType::Transform);
+
+    std::vector<unsigned int> boxes(5);
+    for (int i = 0; i < boxes.size(); ++i)
+    {
+        if (!world.create_entity(boxes[i])) {
+            return -1;
+        }
+        world.add_components(
+            boxes[i],
+            { ComponentType::Transform, ComponentType::Mesh });
+
+       Component* c = world.get_component(boxes[i], ComponentType::Mesh);
+       c = box;
+    }
+
     unsigned int shader = Shader::create(
         "data/shaders/testShader.vert",
         "data/shaders/testShader.frag");
-
-    unsigned int indices[] {
-        0, 2, 3,
-        0, 3, 1,
-    };
-
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
 
     unsigned int vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
@@ -151,15 +138,7 @@ int main()
     Shader::set_int(shader, "texture1", 0);
     Shader::set_int(shader, "texture2", 1);
 
-    // glm::vec3 world_up = glm::vec3(0.0f, 1.0f, 0.0f);
-    // glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
-    // glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, 0.0f);
-    // glm::vec3 camera_direction = glm::normalize(camera_pos - camera_target);
-    // glm::vec3 camera_right = glm::normalize(glm::cross(world_up, camera_direction));
-    // glm::vec3 camera_up = glm::normalize(glm::cross(camera_direction, camera_right));
-
-    // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    glm::mat4 proj  = glm::mat4(1.0f);
+    glm::mat4 proj = glm::mat4(1.0f);
     proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
 
     while (!glfwWindowShouldClose(window)) {
@@ -173,20 +152,14 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        // glm::mat4 view = cam.get_as_view_matrix();
+
         Shader::use(shader);
-        Shader::set_mat4(shader, "view",  view);
+        // Shader::set_mat4(shader, "view",  view);
         Shader::set_mat4(shader, "proj",  proj);
         Shader::set_float(shader, "blending", 0.5f);
 
         glBindVertexArray(vao);
-        float radius = 10.0f;
-        float cam_x = (float)std::sin(glfwGetTime()) * radius;
-        float cam_z = (float)std::cos(glfwGetTime()) * radius;
-        glm::mat4 view = glm::lookAt(
-            glm::vec3(cam_x, 0.0f, cam_z),
-            glm::vec3(0.0f, 0.0f, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f));
-
         for (unsigned int i = 0; i < 10; ++i) {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
@@ -201,7 +174,6 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
     }
 
     glDeleteVertexArrays(1, &vao);
@@ -220,16 +192,12 @@ void frame_buffer_size_callback(GLFWwindow* window, const int width, const int h
 void process_input(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        view = glm::rotate(view, -0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        view = glm::rotate(view,  0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        view = glm::rotate(view,  0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        view = glm::rotate(view, -0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);

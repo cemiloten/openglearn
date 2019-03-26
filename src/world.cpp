@@ -4,21 +4,56 @@ World::World(unsigned int entity_count)
     : m_entity_count(entity_count)
 {
     m_entities.resize(entity_count);
+    m_transforms.resize(entity_count);;
+    m_meshes.resize(entity_count);;
 }
 
-unsigned int World::create_entity(std::unique_ptr<World> world)
+bool World::create_entity(unsigned int& index) const
 {
-    unsigned int entity;
-    unsigned int entity_count = world->m_entity_count;
-    for (entity = 0; entity < entity_count; ++entity) {
-        if (world->m_entities[entity] == CompTypeNone) {
-            return entity;
+    unsigned int size = m_entities.size();
+    for (unsigned int i = 0; i < size; ++i) {
+        if (m_entities[i] == 0) {
+            index = i;
+            return true;
         }
     }
-    return entity_count;
+    index = size;
+    return false;
 }
 
-void World::destroy_entity(std::unique_ptr<World> world, unsigned int index)
+void World::destroy_entity(const unsigned int index)
 {
-    world->m_entities[index] = CompTypeNone;
+    m_entities[index] = 0; // Sets all component flags to 0
+}
+
+bool World::has_component(const unsigned int index, const ComponentType type) const
+{
+    unsigned int uint_type = static_cast<unsigned int>(type);
+    return (m_entities[index] & uint_type) == uint_type;
+}
+
+void World::add_component(const unsigned int index, const ComponentType type)
+{
+    m_entities[index] |= static_cast<unsigned int>(type);
+}
+
+void World::add_components(const unsigned int index, const std::vector<ComponentType>& types)
+{
+    unsigned int entity = 0;
+    for (int i = 0; i < types.size(); ++i) {
+        entity |= static_cast<unsigned int>(types[i]);
+    }
+    m_entities[index] |= entity;
+}
+
+Component* World::get_component(const unsigned int index, const ComponentType type)
+{
+    switch (type) {
+        case ComponentType::Transform:
+            return &m_transforms[index];
+        case ComponentType::Mesh:
+            return m_meshes[index];
+        default:
+            return nullptr;
+    }
 }
