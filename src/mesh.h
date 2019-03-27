@@ -16,7 +16,7 @@ struct Mesh : public Component
     {}
 
     // int vertex_count() const;
-    // int face_count() const;
+    unsigned int triangle_count() const;
 
     // glm::vec3& get_point  (int index);
     // int        get_vertex (int face_index, int local_index) const;
@@ -28,5 +28,10 @@ struct Mesh : public Component
         return ComponentType::Mesh;
     }
 };
+
+unsigned int Mesh::triangle_count() const
+{
+    return static_cast<unsigned int>(faces.size());
+}
 
 

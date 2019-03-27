@@ -90,46 +90,23 @@ int main()
         "data/shaders/testShader.vert",
         "data/shaders/testShader.frag");
 
-    unsigned int vao, vbo, ebo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    // bind vertex array object
-    glBindVertexArray(vao);
-    // copy our vertices array in a vertex buffer for opengl to use
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // unbind our data from buffers
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
+    // glm::vec3 cubePositions[] = {
+    //     glm::vec3( 0.0f,  0.0f,  0.0f),
+    //     glm::vec3( 2.0f,  5.0f, -15.0f),
+    //     glm::vec3(-1.5f, -2.2f, -2.5f),
+    //     glm::vec3(-3.8f, -2.0f, -12.3f),
+    //     glm::vec3( 2.4f, -0.4f, -3.5f),
+    //     glm::vec3(-1.7f,  3.0f, -7.5f),
+    //     glm::vec3( 1.3f, -2.0f, -2.5f),
+    //     glm::vec3( 1.5f,  2.0f, -2.5f),
+    //     glm::vec3( 1.5f,  0.2f, -1.5f),
+    //     glm::vec3(-1.3f,  1.0f, -1.5f)
+    // };
 
     GLuint texture1 = Texture::load("data/textures/wall.jpg");
     GLuint texture2 = Texture::load("data/textures/smiley.png");
@@ -140,6 +117,8 @@ int main()
 
     glm::mat4 proj = glm::mat4(1.0f);
     proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
+
+    GLuint cube = VAO::from_mesh(*box, VAO::DrawMode::Static);
 
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
@@ -159,24 +138,26 @@ int main()
         Shader::set_mat4(shader, "proj",  proj);
         Shader::set_float(shader, "blending", 0.5f);
 
-        glBindVertexArray(vao);
-        for (unsigned int i = 0; i < 10; ++i) {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            if (i % 2 == 0) {
-                float angle = 20.0f * i;
-                model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            }
-            Shader::set_mat4(shader, "model", model);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        VAO::bind(cube);
+        VAO::draw(cube, *box);
+
+        // for (unsigned int i = 0; i < 10; ++i) {
+        //     glm::mat4 model = glm::mat4(1.0f);
+        //     model = glm::translate(model, cubePositions[i]);
+        //     if (i % 2 == 0) {
+        //         float angle = 20.0f * i;
+        //         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        //     }
+        //     Shader::set_mat4(shader, "model", model);
+        //     glDrawArrays(GL_TRIANGLES, 0, 36);
+        // }
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &vao);
+    glDeleteVertexArrays(1, &cube);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
 
