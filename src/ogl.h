@@ -2,11 +2,14 @@
 
 #include <limits>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 struct IHandle
 {
     unsigned short int index;
 
-    static bool is_valid(IHandle _handle)
+    bool is_valid(IHandle _handle)
     {
         return _handle.index != IHandle::invalid_handle;
     }
@@ -15,4 +18,4 @@ private:
     const static unsigned short int invalid_handle = std::numeric_limits<unsigned short int>::max();
 };
 
-struct VertexDeclHandle : private IHandle {};
+struct VertexDeclHandle : public IHandle {};
