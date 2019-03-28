@@ -1,6 +1,6 @@
 #pragma once
 
-class IApp
+struct IApp
 {
 public:
     IApp(const char* _name, const char* _description)
@@ -9,12 +9,15 @@ public:
 
     virtual ~IApp() = 0;
 
-    virtual void init(
-        int _argc,
+    virtual void initialize(
+        const int _argc,
         const char* const* _argv,
-        unsigned int _width,
-        unsigned int _height
-    ) = 0;
+        const unsigned int _width,
+        const unsigned int _height)
+    {
+        m_width = _width;
+        m_height = _height;
+    }
 
     virtual int shutdown() = 0;
 
@@ -24,6 +27,9 @@ public:
 
     const char* get_description() const { return m_description; }
 
+protected:
+    unsigned int m_width;
+    unsigned int m_height;
 
 private:
     const char* m_name;

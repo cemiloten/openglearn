@@ -7,7 +7,7 @@ enum class ComponentType : unsigned int
     Mesh       = 1 << 1,
 };
 
-struct Component
+struct IComponent
 {
 public:
     virtual ComponentType get_type() const = 0;

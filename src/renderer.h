@@ -1,8 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "index_buffer.h"
 #include "vertex_buffer.h"
 #include "shader.h"
@@ -16,4 +13,19 @@ struct RendererContext
     // Shader m_shaders[1024];
     // Program m_programs[1024];
     // Texture m_textures[1024];
+
+    void create_index_buffer(
+        const IndexBufferHandle _handle,
+        const unsigned int* _data,
+        const unsigned int _size);
+
+    void destroy_index_buffer(const IndexBufferHandle _handle);
+
+    void create_vertex_buffer(
+        const VertexBufferHandle _handle,
+        const unsigned int* _data,
+        const unsigned int _size,
+        const VertexDeclHandle _declHandle);
+
+    void destroy_vertex_buffer(const VertexBufferHandle _handle);
 };

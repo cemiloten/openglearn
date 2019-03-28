@@ -18,4 +18,6 @@ private:
     const static unsigned short int invalid_handle = std::numeric_limits<unsigned short int>::max();
 };
 
+struct IndexBufferHandle : public IHandle {};
+struct VertexBufferHandle : public IHandle {};
 struct VertexDeclHandle : public IHandle {};

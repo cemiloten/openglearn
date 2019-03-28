@@ -14,9 +14,37 @@
 #include "texture.h"
 #include "obj_parser.h"
 #include "vao.h"
+#include "app.h"
 
-const unsigned int window_width{ 800 };
-const unsigned int window_height{ 600 };
+struct OpenGLearn : public IApp
+{
+    OpenGLearn(const char* _name, const char* _description)
+        : IApp(_name, _description)
+    {}
+
+    virtual void initialize(
+        const int _argc,
+        const char* const* _argv,
+        const unsigned int _width,
+        const unsigned int _height) override
+    {
+        IApp::initialize(_argc, _argv, _width, _height);
+
+        // TODO: initialize vertex data etc.
+    }
+
+    virtual int shutdown() override
+    {
+        // free memory
+    }
+
+    virtual bool update() override
+    {
+        // process events
+        // draw stuff
+        return false;
+    }
+};
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
@@ -82,7 +110,7 @@ int main()
             boxes[i],
             { ComponentType::Transform, ComponentType::Mesh });
 
-       Component* c = world.get_component(boxes[i], ComponentType::Mesh);
+       IComponent* c = world.get_component(boxes[i], ComponentType::Mesh);
        c = box;
     }
 
@@ -90,10 +118,10 @@ int main()
         "data/shaders/testShader.vert",
         "data/shaders/testShader.frag");
 
-
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    int a = 0;
 
     // glm::vec3 cubePositions[] = {
     //     glm::vec3( 0.0f,  0.0f,  0.0f),
