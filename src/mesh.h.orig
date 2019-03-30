@@ -1,0 +1,76 @@
+#pragma once
+
+#include <vector>
+<<<<<<< HEAD
+#include <string>
+#include <glm/glm.hpp>
+
+struct VertexIndices
+{
+    unsigned int v_index;
+    unsigned int vt_index;
+    unsigned int vn_index;
+};
+
+struct Face
+{
+    VertexIndices v_indices[3];
+};
+
+struct Mesh
+{
+public:
+    Mesh();
+
+    inline unsigned int vertex_count() const { return vertices.size(); }
+    inline unsigned int face_count()   const { return faces.size(); }
+
+    glm::vec3& get_vertex (int index);
+    glm::vec3& get_vertex (int face_index, int local_index);
+    glm::vec2& get_uv     (int face_index, int local_index);
+    glm::vec3& get_normal (int face_index, int local_index);
+
+private:
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> texcoords;
+    std::vector<Face> faces;
+};
+
+Mesh load_mesh_from_obj(const std::string& path);
+=======
+#include <glm/glm.hpp>
+
+#include "component.h"
+
+struct Mesh : public Component
+{
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> texcoords;
+    std::vector<std::vector<glm::ivec3> > faces; // this ivec3 means vertex/uv/normal ids
+
+    Mesh() : vertices() , normals() , texcoords() , faces()
+    {}
+
+    // int vertex_count() const;
+    unsigned int triangle_count() const;
+
+    // glm::vec3& get_point  (int index);
+    // int        get_vertex (int face_index, int local_index) const;
+    // glm::vec2  get_uv     (int face_index, int local_index) const;
+    // glm::vec3  get_normal (int face_index, int local_index) const;
+
+    ComponentType get_type() const override
+    {
+        return ComponentType::Mesh;
+    }
+};
+
+unsigned int Mesh::triangle_count() const
+{
+    return static_cast<unsigned int>(faces.size());
+}
+
+
+>>>>>>> d27f74969571e2dc9239438d2b8a2ccbf0722713

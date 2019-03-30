@@ -36,4 +36,3 @@ private:
     std::vector<Face> faces;
 };
 
-Mesh load_mesh_from_obj(const std::string& path);
