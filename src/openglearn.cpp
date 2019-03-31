@@ -7,14 +7,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 #include "world.h"
 #include "camera.h"
 #include "shader.h"
 #include "texture.h"
-#include "obj_parser.h"
-#include "vao.h"
-#include "app.h"
+
+void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
+void process_input(GLFWwindow* window);
 
 struct App
 {
@@ -62,14 +61,6 @@ struct App
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    int shutdown()
-    {
-        // glDeleteVertexArrays(1, &cube);
-        // glDeleteBuffers(1, &vbo);
-        // glDeleteBuffers(1, &ebo);
-        // glfwTerminate();
-    }
-
     bool update()
     {
         while (!glfwWindowShouldClose(m_window))
@@ -109,9 +100,16 @@ struct App
             glfwSwapBuffers(m_window);
             glfwPollEvents();
         }
-        // process events
-        // draw stuff
         return false;
+    }
+
+    int shutdown()
+    {
+        // glDeleteVertexArrays(1, &cube);
+        // glDeleteBuffers(1, &vbo);
+        // glDeleteBuffers(1, &ebo);
+        // glfwTerminate();
+        return 0;
     }
 
     const char* get_name() const { return m_name; }
@@ -125,48 +123,18 @@ private:
     GLFWwindow* m_window;
 };
 
-void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
-void process_input(GLFWwindow* window);
 
-int main()
+int main(int argc, char* argv[])
 {
+    App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
+    app.initialize(argc, argv, 800, 600);
 
-    // unsigned int camera;
-    // if (!world.create_entity(camera)) {
-    //     return -1;
-    // }
-    // world.add_component(camera, ComponentType::Transform);
+    while (app.update()) {
+        std::cout << "running..." << std::endl;
+    }
 
-    // std::vector<unsigned int> boxes(5);
-    // for (int i = 0; i < boxes.size(); ++i)
-    // {
-    //     if (!world.create_entity(boxes[i])) {
-    //         return -1;
-    //     }
-    //     world.add_components(
-    //         boxes[i],
-    //         { ComponentType::Transform, ComponentType::Mesh });
-
-    //    IComponent* c = world.get_component(boxes[i], ComponentType::Mesh);
-    //    c = box;
-    // }
-
-    // unsigned int shader = Shader::create(
-    //     "data/shaders/testShader.vert",
-    //     "data/shaders/testShader.frag");
-
-    // GLuint texture1 = Texture::load("data/textures/wall.jpg");
-    // GLuint texture2 = Texture::load("data/textures/smiley.png");
-
-    // Shader::use(shader);
-    // Shader::set_int(shader, "texture1", 0);
-    // Shader::set_int(shader, "texture2", 1);
-
-    // glm::mat4 proj = glm::mat4(1.0f);
-    // proj = glm::perspective(glm::radians(45.0f), (float)window_width / (float)window_height, 0.1f, 100.0f);
-
-    // GLuint cube = VAO::from_mesh(*box, VAO::DrawMode::Static);
-    // return 0;
+    app.shutdown();
+    return 0;
 }
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height)

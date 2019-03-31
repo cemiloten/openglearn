@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 project(openglearn)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Autocomplete
+
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
@@ -16,7 +18,8 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-            "-Wall -Wextra -pedantic">
+            "-Wall -Wextra">
+            # "-Wall -Wextra -pedantic">
         $<$<CXX_COMPILER_ID:MSVC>:
             /W4>)
 

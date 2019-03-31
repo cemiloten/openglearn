@@ -28,25 +28,19 @@ public:
         : m_stride(0)
     {}
 
-    template <typename T>
-    void push(unsigned int count);
-
-    template<>
-    void push<float>(unsigned int count)
+    void push_float(unsigned int count)
     {
         m_elements.push_back({ GL_FLOAT, count, GL_FALSE });
         m_stride += VertexBufferElement::sizeof_gl_type(GL_FLOAT);
     }
 
-    template<>
-    void push<unsigned int>(unsigned int count)
+    void push_uint(unsigned int count)
     {
         m_elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
         m_stride += count * VertexBufferElement::sizeof_gl_type(GL_UNSIGNED_INT);
     }
 
-    template<>
-    void push<unsigned char>(unsigned int count)
+    void push_uchar(unsigned int count)
     {
         m_elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
         m_stride += count * VertexBufferElement::sizeof_gl_type(GL_UNSIGNED_BYTE);

@@ -11,8 +11,7 @@ struct VertexIndices
     unsigned int vn_index;
 };
 
-struct Face
-{
+union Face {
     VertexIndices v_indices[3];
 };
 
@@ -23,6 +22,7 @@ public:
 
     inline unsigned int vertex_count() const { return vertices.size(); }
     inline unsigned int face_count()   const { return faces.size(); }
+    int abc = 555314315;
 
     glm::vec3& get_vertex (int index);
     glm::vec3& get_vertex (int face_index, int local_index);

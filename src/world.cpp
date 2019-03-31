@@ -10,15 +10,15 @@ World::World(unsigned int entity_count)
 
 bool World::create_entity(unsigned int& index) const
 {
-    unsigned int size = m_entities.size();
-    for (unsigned int i = 0; i < size; ++i) {
-        if (m_entities[i] == 0) {
-            index = i;
-            return true;
-        }
-    }
-    index = size;
-    return false;
+    // unsigned int size = m_entities.size();
+    // for (unsigned int i = 0; i < size; ++i) {
+    //     if (m_entities[i] == 0) {
+    //         index = i;
+    //         return true;
+    //     }
+    // }
+    // index = size;
+    // return false;
 }
 
 void World::destroy_entity(const unsigned int index)
@@ -46,14 +46,14 @@ void World::add_components(const unsigned int index, const std::vector<Component
     m_entities[index] |= entity;
 }
 
-Component* World::get_component(const unsigned int index, const ComponentType type)
+IComponent* World::get_component(const unsigned int index, const ComponentType type)
 {
-    switch (type) {
-        case ComponentType::Transform:
-            return &m_transforms[index];
-        case ComponentType::Mesh:
-            return m_meshes[index];
-        default:
-            return nullptr;
-    }
+    // switch (type) {
+    //     case ComponentType::Transform:
+    //         return &m_transforms[index];
+    //     case ComponentType::Mesh:
+    //         return m_meshes[index];
+    //     default:
+    //         return nullptr;
+    // }
 }

@@ -17,7 +17,7 @@ public:
     void add_component(const unsigned int index, const ComponentType type);
     void add_components(const unsigned int index, const std::vector<ComponentType>& types);
     bool has_component(const unsigned int index, const ComponentType type) const;
-    Component* get_component(const unsigned int index, const ComponentType type);
+    IComponent* get_component(const unsigned int index, const ComponentType type);
 
 private:
     unsigned int m_entity_count;

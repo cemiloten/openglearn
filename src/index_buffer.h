@@ -33,7 +33,7 @@ struct IndexBuffer
             create(m_size, NULL, m_flags);
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER _offset, _size, _data);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, _offset, _size, _data);
     }
 
     void destroy()

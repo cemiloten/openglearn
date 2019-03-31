@@ -6,7 +6,7 @@
 
 #include "component.h"
 
-struct Transform : public Component
+struct Transform : public IComponent
 {
     glm::vec3 position;
     glm::quat quaternion;
