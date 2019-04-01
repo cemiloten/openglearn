@@ -11,6 +11,8 @@
 #include "camera.h"
 #include "shader.h"
 #include "texture.h"
+#include "mesh.h"
+#include "obj_importer.h"
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
 void process_input(GLFWwindow* window);
@@ -109,6 +111,7 @@ struct App
         // glDeleteBuffers(1, &vbo);
         // glDeleteBuffers(1, &ebo);
         // glfwTerminate();
+        std::cout << "shutting down..." << std::endl;
         return 0;
     }
 
@@ -126,15 +129,15 @@ private:
 
 int main(int argc, char* argv[])
 {
-    App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
-    app.initialize(argc, argv, 800, 600);
 
-    while (app.update()) {
-        std::cout << "running..." << std::endl;
-    }
+    // App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
+    // app.initialize(argc, argv, 800, 600);
 
-    app.shutdown();
-    return 0;
+    // while (app.update()) {
+    // }
+
+    // app.shutdown();
+    // return 0;
 }
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height)

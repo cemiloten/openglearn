@@ -1,27 +1,25 @@
 cmake_minimum_required(VERSION 3.1)
 project(openglearn)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Autocomplete
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 file(GLOB SOURCES
-    "${SRC_DIR}/*.cpp"
-    "${SRC_DIR}/*.h")
+    "${SRC_DIR}/*")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
 target_include_directories(${PROJECT_NAME} PRIVATE "${LIB_DIR}")
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
-target_compile_options(${PROJECT_NAME}
-    PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-            "-Wall -Wextra">
-            # "-Wall -Wextra -pedantic">
-        $<$<CXX_COMPILER_ID:MSVC>:
-            /W4>)
+# target_compile_options(${PROJECT_NAME}
+#     PRIVATE
+#         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+#             "-Wall -Wextra">
+#         $<$<CXX_COMPILER_ID:MSVC>:
+#             /W4>)
 
 # GLFW
 set(GLFW_DIR "${LIB_DIR}/glfw")
