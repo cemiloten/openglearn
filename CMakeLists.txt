@@ -3,15 +3,15 @@ project(openglearn)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
-set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+set(LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 
 file(GLOB SOURCES
-    "${SRC_DIR}/*")
+    ${SRC_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
-target_include_directories(${PROJECT_NAME} PRIVATE "${LIB_DIR}")
+target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIB_DIR})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 # target_compile_options(${PROJECT_NAME}

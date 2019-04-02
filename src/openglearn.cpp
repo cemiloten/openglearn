@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <cmath>
 #include <iostream>
 
@@ -29,7 +29,7 @@ struct App
         const unsigned int _width,
         const unsigned int _height)
     {
-        m_width = _width;
+        m_width = _width ;
         m_height = _height;
 
         // TODO: initialize vertex data etc.
@@ -130,14 +130,14 @@ private:
 int main(int argc, char* argv[])
 {
 
-    // App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
-    // app.initialize(argc, argv, 800, 600);
+    App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
+    app.initialize(argc, argv, 800, 600);
 
-    // while (app.update()) {
-    // }
+    while (app.update()) {
+    }
 
-    // app.shutdown();
-    // return 0;
+    app.shutdown();
+    return 0;
 }
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height)
