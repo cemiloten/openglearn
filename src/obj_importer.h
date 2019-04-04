@@ -8,11 +8,11 @@
 namespace obj_importer {
 
 Mesh read_obj_file(const std::string& path);
-void vertexCallback  (void *userData, float x, float y, float z, float w);
-void texcoordCallback(void *userData, float x, float y, float z);
-void normalCallback  (void *userData, float x, float y, float z);
-void indexCallback   (void *userData, tinyobj::index_t *indices, int numIndices);
-void groupCallback   (void* userData, const char** names, int numNames);
-void objectCallback  (void *userData, const char *name);
+void vertexCallback  (void* user_data, float x, float y, float z, float w);
+void texcoordCallback(void* user_data, float x, float y, float z);
+void normalCallback  (void* user_data, float x, float y, float z);
+void indexCallback   (void* user_data, tinyobj::index_t* indices, int num_indices);
+void groupCallback   (void* user_data, const char** names, int num_names);
+void objectCallback  (void* user_data, const char* name);
 
 }

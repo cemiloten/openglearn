@@ -8,14 +8,14 @@ namespace obj_importer {
 
 Mesh read_obj_file(const std::string &path) {
   tinyobj::callback_t cb;
-  cb.vertex_cb = vertexCallback;
-  cb.normal_cb = normalCallback;
+  cb.vertex_cb   = vertexCallback;
+  cb.normal_cb   = normalCallback;
   cb.texcoord_cb = texcoordCallback;
-  cb.index_cb = indexCallback;
-  cb.group_cb = groupCallback;
-  cb.object_cb = objectCallback;
+  cb.index_cb    = indexCallback;
+  cb.group_cb    = groupCallback;
+  cb.object_cb   = objectCallback;
 
-  const char *path_ = path.c_str();
+  const char* path_ = path.c_str();
   std::ifstream ifs(path_);
   if (ifs.fail()) {
     // TODO: log
@@ -28,8 +28,6 @@ Mesh read_obj_file(const std::string &path) {
   std::string err;
   Mesh mesh;
 
-  // Passing NULL to MaterialFileReader parameter because we don't need it for
-  // this exercise.
   bool ret = tinyobj::LoadObjWithCallback(ifs, cb, &mesh, NULL, &warn, &err);
 
   if (!warn.empty()) {
@@ -42,11 +40,6 @@ Mesh read_obj_file(const std::string &path) {
     printf("Couldn't read file: %s", path_);
     exit(1);
   }
-
-
-  // printf("Mesh has positions: %d", mesh.hasPositions());
-  // printf("Mesh has normals: %d", mesh.hasNormals());
-  // printf("Mesh has uvs: %d", mesh.hasTexcoords());
 
   return mesh;
 }
@@ -88,4 +81,4 @@ void objectCallback(void *userData, const char *name) {
   printf("object : name = %s\n", name);
 }
 
-}
+} // namespace obj_importer

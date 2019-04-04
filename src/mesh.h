@@ -3,15 +3,16 @@
 #include <vector>
 #include <string>
 
-struct Vertex
-{
-    float px, py, pz;
-    float nx, ny, nz;
-    float tx, ty;
+#include "vector3.h"
+#include "vector2.h"
+
+struct Vertex {
+    Vector3 pos;
+    Vector3 nrm;
+    Vector2 uv;
 };
 
-struct Mesh
-{
+struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 };
