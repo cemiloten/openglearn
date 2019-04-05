@@ -7,78 +7,70 @@
 namespace obj_importer {
 
 Mesh read_obj_file(const std::string &path) {
-  tinyobj::callback_t cb;
-  cb.vertex_cb   = vertexCallback;
-  cb.normal_cb   = normalCallback;
-  cb.texcoord_cb = texcoordCallback;
-  cb.index_cb    = indexCallback;
-  cb.group_cb    = groupCallback;
-  cb.object_cb   = objectCallback;
+    tinyobj::callback_t cb;
+    cb.object_cb = read_object;
+    cb.vertex_cb = read_position;
+    cb.normal_cb = read_normal;
+    cb.texcoord_cb = read_texcoord;
+    cb.index_cb = read_index;
 
-  const char* path_ = path.c_str();
-  std::ifstream ifs(path_);
-  if (ifs.fail()) {
-    // TODO: log
-    printf("file not found\n");
-    exit(1);
-  }
+    const char *path_ = path.c_str();
+    std::ifstream ifs(path_);
+    if (ifs.fail()) {
+        // TODO: log
+        printf("file not found\n");
+        exit(1);
+    }
 
-  printf("Starting to read %s\n", path_);
-  std::string warn;
-  std::string err;
-  Mesh mesh;
+    printf("Starting to read %s\n", path_);
+    std::string warn;
+    std::string err;
+    Mesh mesh;
 
-  bool ret = tinyobj::LoadObjWithCallback(ifs, cb, &mesh, NULL, &warn, &err);
+    bool ret = tinyobj::LoadObjWithCallback(ifs, cb, &mesh, NULL, &warn, &err);
 
-  if (!warn.empty()) {
-    std::cout << "WARN:\n" << warn << std::endl;
-  }
-  if (!err.empty()) {
-    std::cerr << "ERR:\n" << err << std::endl;
-  }
-  if (!ret) {
-    printf("Couldn't read file: %s", path_);
-    exit(1);
-  }
+    if (!warn.empty()) {
+        std::cout << "WARN:\n" << warn << std::endl;
+    }
+    if (!err.empty()) {
+        std::cerr << "ERR:\n" << err << std::endl;
+    }
+    if (!ret) {
+        printf("Couldn't read file: %s", path_);
+        exit(1);
+    }
 
-  return mesh;
+    return mesh;
 }
 
-void vertexCallback(void *userData, tinyobj::real_t x, tinyobj::real_t y,
-                    tinyobj::real_t z, tinyobj::real_t w) {
-  Mesh *mesh = reinterpret_cast<Mesh *>(userData);
+void read_vertex(void *user_data, float x, float y, float z, float w) {
+    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
+    importer->positions.push_back(Vector3(x, y, z));
 }
 
-void texcoordCallback(void *userData, tinyobj::real_t x, tinyobj::real_t y,
-                      tinyobj::real_t z) {
-  Mesh *mesh = reinterpret_cast<Mesh *>(userData);
+void read_normal(void *user_data, float x, float y, float z) {
+    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
+    importer->normals.push_back(Vector3(x, y, z));
 }
 
-void normalCallback(void *userData, tinyobj::real_t x, tinyobj::real_t y,
-                    tinyobj::real_t z) {
-  Mesh *mesh = reinterpret_cast<Mesh *>(userData);
+void read_texcoord(void *user_data, float x, float y, float z) {
+    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
+    importer->texcoords.push_back(Vector2(x, y));
 }
 
-void indexCallback(void *userData, tinyobj::index_t *indices, int numIndices) {
-  // Support only triangles
-  if (numIndices != 3) {
-    return;
-  }
-  Mesh *mesh = reinterpret_cast<Mesh *>(userData);
+void read_index(void *user_data, tinyobj::index_t* indices, int num_indices) {
+    assert(num_indices == 3 && "Only triangles are supported when reading objs");
+    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
 }
 
-void groupCallback(void *userData, const char **names, int numNames) {
-  // MyMesh *mesh = reinterpret_cast<MyMesh*>(userData);
-  printf("group : name = \n");
-
-  for (int i = 0; i < numNames; i++) {
-    printf("  %s\n", names[i]);
-  }
+void read_object(void *user_data, const char *name) {
+    printf("object : name = %s\n", name);
 }
 
-void objectCallback(void *userData, const char *name) {
-  // MyMesh *mesh = reinterpret_cast<MyMesh*>(user_data);
-  printf("object : name = %s\n", name);
+bool operator==(const tinyobj::index_t& lhs, const tinyobj::index_t& rhs) {
+    return lhs.vertex_index == rhs.vertex_index
+        && lhs.normal_index == rhs.normal_index
+        && lhs.texcoord_index == rhs.texcoord_index;
 }
 
 } // namespace obj_importer
