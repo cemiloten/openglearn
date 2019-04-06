@@ -1,14 +1,13 @@
 #include <iostream>
 
-#define TINYOBJLOADER_IMPLEMENTATION
 #include "obj_importer.h"
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
 namespace obj_importer {
 
 Mesh read_obj_file(const std::string &path) {
     tinyobj::callback_t cb;
-    cb.object_cb = read_object;
     cb.vertex_cb = read_position;
     cb.normal_cb = read_normal;
     cb.texcoord_cb = read_texcoord;
@@ -44,33 +43,63 @@ Mesh read_obj_file(const std::string &path) {
 }
 
 void read_vertex(void *user_data, float x, float y, float z, float w) {
-    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
-    importer->positions.push_back(Vector3(x, y, z));
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+    imp->positions.push_back(Vector3(x, y, z));
 }
 
 void read_normal(void *user_data, float x, float y, float z) {
-    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
-    importer->normals.push_back(Vector3(x, y, z));
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+    imp->normals.push_back(Vector3(x, y, z));
 }
 
 void read_texcoord(void *user_data, float x, float y, float z) {
-    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
-    importer->texcoords.push_back(Vector2(x, y));
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+    imp->texcoords.push_back(Vector2(x, y));
 }
 
 void read_index(void *user_data, tinyobj::index_t* indices, int num_indices) {
     assert(num_indices == 3 && "Only triangles are supported when reading objs");
-    ObjImporter* importer = reinterpret_cast<ObjImporter*>(user_data);
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+
+    for (int i = 0; i < num_indices; ++i)
+    {
+        tinyobj::index_t idx = indices[i];
+        tinyobj::index_t cleanIdx;
+
+        tinyobj::fixIndex(idx.vertex_index, imp->indexReadCount, &cleanIdx.vertex_index);
+        ++imp->indexReadCount;
+        tinyobj::fixIndex(idx.normal_index, imp->indexReadCount, &cleanIdx.normal_index);
+        ++imp->indexReadCount;
+        tinyobj::fixIndex(idx.texcoord_index, imp->indexReadCount, &cleanIdx.texcoord_index);
+        ++imp->indexReadCount;
+
+        int index = imp->findVertex(cleanIdx);
+        if (index != -1) {
+           imp->mesh.indices.push_back(index);
+        } else {
+            Vertex vertex(
+               imp->positions[cleanIdx.vertex_index],
+               imp->normals  [cleanIdx.normal_index],
+               imp->texcoords[cleanIdx.texcoord_index]);
+
+           imp->mesh.indices.push_back(static_cast<unsigned int>(imp->mesh.vertices.size()));
+           imp->mesh.vertices.push_back(vertex);
+
+           imp->vertexIndices.push_back(cleanIdx);
+        }
+    }
 }
 
-void read_object(void *user_data, const char *name) {
-    printf("object : name = %s\n", name);
+int ObjImporter::findVertex(tinyobj::index_t vertex) {
+    for (size_t i = 0; i < vertexIndices.size(); ++i) {
+        const tinyobj::index_t& v = vertexIndices[i];
+        if (v.vertex_index == vertex.vertex_index
+            && v.normal_index == vertex.normal_index
+            && v.texcoord_index == vertex.texcoord_index) {
+                return i;
+        }
+    }
+    return -1;
 }
 
-bool operator==(const tinyobj::index_t& lhs, const tinyobj::index_t& rhs) {
-    return lhs.vertex_index == rhs.vertex_index
-        && lhs.normal_index == rhs.normal_index
-        && lhs.texcoord_index == rhs.texcoord_index;
 }
-
-} // namespace obj_importer

@@ -9,7 +9,12 @@
 struct Vertex {
     Vector3 pos;
     Vector3 nrm;
-    Vector2 uv;
+    Vector2 tex;
+
+    Vertex();
+    Vertex(const Vector3& position,
+        const Vector3& normal,
+        const Vector2& texcoord);
 };
 
 struct Mesh {
