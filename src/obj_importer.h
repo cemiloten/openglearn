@@ -2,18 +2,20 @@
 
 #include <string>
 
-#include "tiny_obj_loader.h"
 #include "mesh.h"
-
-namespace obj_importer {
+#include "tiny_obj_loader.h"
 
 Mesh read_obj_file(const std::string& path);
 void read_position(void* user_data, float x, float y, float z, float w);
 void read_texcoord(void* user_data, float x, float y, float z);
-void read_normal  (void* user_data, float x, float y, float z);
-void read_index   (void* user_data, tinyobj::index_t* indices, int num_indices);
+void read_normal(void* user_data, float x, float y, float z);
+void read_index(void* user_data, tinyobj::index_t* indices, int num_indices);
 
 struct ObjImporter {
+    ObjImporter()
+        : positions(), normals(), texcoords(), vertexIndices(),
+          indexReadCount(0), mesh() {}
+
     std::vector<Vector3> positions;
     std::vector<Vector3> normals;
     std::vector<Vector2> texcoords;
@@ -24,5 +26,3 @@ struct ObjImporter {
 
     int findVertex(tinyobj::index_t vertex);
 };
-
-}

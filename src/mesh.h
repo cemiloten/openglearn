@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "vector3.h"
 #include "vector2.h"
+#include "vector3.h"
 
 struct Vertex {
     Vector3 pos;
@@ -12,14 +12,15 @@ struct Vertex {
     Vector2 tex;
 
     Vertex();
-    Vertex(const Vector3& position,
-        const Vector3& normal,
-        const Vector2& texcoord);
+    Vertex(const Vector3& position, const Vector3& normal,
+           const Vector2& texcoord);
 };
 
 struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+
+    Mesh() : vertices(), indices() {}
 };
 
 union Triangle {

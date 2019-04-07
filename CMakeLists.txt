@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 project(openglearn)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE ON)
+set(CMAKE_BUILD_TYPE Debug)
 
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(LIB_DIR ${CMAKE_SOURCE_DIR}/lib)

@@ -1,35 +1,30 @@
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 
-#include <glad/glad.h>
+#include "camera.h"
+#include "mesh.h"
+#include "obj_importer.h"
+#include "shader.h"
+#include "texture.h"
+#include "world.h"
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "world.h"
-#include "camera.h"
-#include "shader.h"
-#include "texture.h"
-#include "mesh.h"
-#include "obj_importer.h"
 
-void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height);
+void frame_buffer_size_callback(GLFWwindow* window, const int width,
+                                const int height);
 void process_input(GLFWwindow* window);
 
-struct App
-{
+struct App {
     App(const char* _name, const char* _description)
-        : m_name(_name), m_description(_description)
-    {}
+        : m_name(_name), m_description(_description) {}
 
-    void initialize(
-        const int _argc,
-        const char* const* _argv,
-        const unsigned int _width,
-        const unsigned int _height)
-    {
-        m_width = _width ;
+    void initialize(const int _argc, const char* const* _argv,
+                    const unsigned int _width, const unsigned int _height) {
+        m_width = _width;
         m_height = _height;
 
         // TODO: initialize vertex data etc.
@@ -43,7 +38,8 @@ struct App
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-        m_window = glfwCreateWindow(m_width, m_height, "openGLearn", NULL, NULL);
+        m_window =
+            glfwCreateWindow(m_width, m_height, "openGLearn", NULL, NULL);
         if (m_window == NULL) {
             printf("Error creating window\n");
             glfwTerminate();
@@ -61,21 +57,18 @@ struct App
         glEnable(GL_DEPTH_TEST);
         glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        m_mesh = read_obj_file("data/models/cube.obj");
+        // TODO:
+        // fill buffers to draw mesh
     }
 
-    bool update()
-    {
-        while (!glfwWindowShouldClose(m_window))
-        {
+    bool update() {
+        while (!glfwWindowShouldClose(m_window)) {
             process_input(m_window);
 
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // glActiveTexture(GL_TEXTURE0);
-            // glBindTexture(GL_TEXTURE_2D, texture1);
-            // glActiveTexture(GL_TEXTURE1);
-            // glBindTexture(GL_TEXTURE_2D, texture2);
 
             // // glm::mat4 view = cam.get_as_view_matrix();
 
@@ -92,7 +85,8 @@ struct App
             //     model = glm::translate(model, cubePositions[i]);
             //     if (i % 2 == 0) {
             //         float angle = 20.0f * i;
-            //         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            //         model = glm::rotate(model, (float)glfwGetTime() *
+            //         glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             //     }
             //     Shader::set_mat4(shader, "model", model);
             //     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -105,31 +99,28 @@ struct App
         return false;
     }
 
-    int shutdown()
-    {
+    int shutdown() {
         // glDeleteVertexArrays(1, &cube);
         // glDeleteBuffers(1, &vbo);
         // glDeleteBuffers(1, &ebo);
-        // glfwTerminate();
+        glfwTerminate();
         std::cout << "shutting down..." << std::endl;
         return 0;
     }
 
-    const char* get_name() const { return m_name; }
-    const char* get_description() const { return m_description; }
+    inline const char* get_name() const { return m_name; }
+    inline const char* get_description() const { return m_description; }
 
-private:
+  private:
     const char* m_name;
     const char* m_description;
     unsigned int m_width;
     unsigned int m_height;
     GLFWwindow* m_window;
+    Mesh m_mesh;
 };
 
-
-int main(int argc, char* argv[])
-{
-
+int main(int argc, char* argv[]) {
     App app("OpenGLearn", "A simple sandbox app for experimenting with OpenGL");
     app.initialize(argc, argv, 800, 600);
 
@@ -140,13 +131,12 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void frame_buffer_size_callback(GLFWwindow* window, const int width, const int height)
-{
+void frame_buffer_size_callback(GLFWwindow* window, const int width,
+                                const int height) {
     glViewport(0, 0, width, height); // Match new dimensions
 }
 
-void process_input(GLFWwindow* window)
-{
+void process_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
