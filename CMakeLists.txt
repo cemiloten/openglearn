@@ -10,17 +10,19 @@ set(LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 file(GLOB SOURCES
     ${SRC_DIR}/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${LIB_DIR})
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
-# target_compile_options(${PROJECT_NAME}
-#     PRIVATE
-#         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-#             "-Wall -Wextra">
-#         $<$<CXX_COMPILER_ID:MSVC>:
-#             /W4>)
+add_executable(openglearn ${SOURCES})
+target_include_directories(openglearn PRIVATE ${SRC_DIR})
+target_include_directories(openglearn PRIVATE ${LIB_DIR})
+set_property(TARGET openglearn PROPERTY CXX_STANDARD 11)
+set_property(TARGET openglearn PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET openglearn PROPERTY CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set_property(TARGET openglearn PROPERTY CMAKE_BUILD_TYPE Debug)
+target_compile_options(openglearn
+    PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+            "-Wall -Wextra">
+        $<$<CXX_COMPILER_ID:MSVC>:
+            /W4>)
 
 # GLFW
 set(GLFW_DIR "${LIB_DIR}/glfw")

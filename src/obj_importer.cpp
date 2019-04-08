@@ -4,16 +4,15 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
-Mesh read_obj_file(const std::string& path) {
+Mesh readObjFile(const std::string& path) {
     tinyobj::callback_t cb;
-    cb.vertex_cb = read_position;
-    cb.normal_cb = read_normal;
-    cb.texcoord_cb = read_texcoord;
-    cb.index_cb = read_index;
+    cb.vertex_cb = readPosition;
+    cb.normal_cb = readNormal;
+    cb.texcoord_cb = readTexcoord;
+    cb.index_cb = readIndex;
 
     std::ifstream ifs(path);
     if (ifs.fail()) {
-        // TODO: log
         printf("file not found\n");
         exit(1);
     }
@@ -23,8 +22,10 @@ Mesh read_obj_file(const std::string& path) {
     std::string err;
 
     ObjImporter importer;
-    // bool ret = tinyobj::LoadObj(&attrib, &shapes, nullptr, &warn, &err, path.c_str());
-    bool ret = tinyobj::LoadObjWithCallback(ifs, cb, &importer, NULL, &warn, &err);
+    // bool ret = tinyobj::LoadObj(&attrib, &shapes, nullptr, &warn, &err,
+    // path.c_str());
+    bool ret =
+        tinyobj::LoadObjWithCallback(ifs, cb, &importer, NULL, &warn, &err);
 
     if (!warn.empty()) {
         std::cout << "WARN:\n" << warn << std::endl;
@@ -40,27 +41,26 @@ Mesh read_obj_file(const std::string& path) {
     return importer.mesh;
 }
 
-void read_position(void* user_data, float x, float y, float z, float w) {
-    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+void readPosition(void* userData, float x, float y, float z, float w) {
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
     imp->positions.push_back(Vector3(x, y, z));
 }
 
-void read_normal(void* user_data, float x, float y, float z) {
-    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+void readNormal(void* userData, float x, float y, float z) {
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
     imp->normals.push_back(Vector3(x, y, z));
 }
 
-void read_texcoord(void* user_data, float x, float y, float z) {
-    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+void readTexcoord(void* userData, float x, float y, float z) {
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
     imp->texcoords.push_back(Vector2(x, y));
 }
 
-void read_index(void* user_data, tinyobj::index_t* indices, int num_indices) {
-    assert(num_indices == 3 &&
-           "Only triangles are supported when reading objs");
-    ObjImporter* imp = reinterpret_cast<ObjImporter*>(user_data);
+void readIndex(void* userData, tinyobj::index_t* indices, int numIndices) {
+    assert(numIndices == 3 && "Only triangles are supported when reading objs");
+    ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
 
-    for (int i = 0; i < num_indices; ++i) {
+    for (int i = 0; i < numIndices; ++i) {
         tinyobj::index_t idx = indices[i];
         tinyobj::index_t cleanIdx;
 

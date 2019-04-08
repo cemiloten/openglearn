@@ -2,17 +2,17 @@
 #include <cstdio>
 #include <iostream>
 
-#include "camera.h"
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
+
 #include "mesh.h"
 #include "obj_importer.h"
+#include "ogl.h"
 #include "shader.h"
 #include "texture.h"
 #include "world.h"
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width,
                                 const int height);
@@ -58,7 +58,12 @@ struct App {
         glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        m_mesh = read_obj_file("data/models/cube.obj");
+        m_mesh = readObjFile("data/models/cube.obj");
+        unsigned int vbo;
+        glGenBuffers(1, &vbo);
+        // create vertex buffer
+        // create index buffer
+
         // TODO:
         // fill buffers to draw mesh
     }
