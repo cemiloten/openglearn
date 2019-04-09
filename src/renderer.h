@@ -10,8 +10,8 @@
 #include "texture.h"
 
 struct RendererContext {
-    VertexBuffer vertexBuffers[1024];
-    IndexBuffer indexBuffers[1024];
+    VertexBuffer _vertex_buffers[1024];
+    IndexBuffer _index_buffers[1024];
     // Shader m_shaders[1024];
     // Program m_programs[1024];
 

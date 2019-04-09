@@ -3,20 +3,20 @@
 #include <string>
 #include <vector>
 
-#include "vector2.h"
-#include "vector3.h"
+#include "freelist.h"
+#include "glm/glm.hpp"
 
 struct Vertex {
-    Vector3 pos;
-    Vector3 nrm;
-    Vector2 tex;
+    glm::vec3 pos;
+    glm::vec3 nrm;
+    glm::vec2 tex;
 
     Vertex();
-    Vertex(const Vector3& position, const Vector3& normal,
-           const Vector2& texcoord);
+    Vertex(const glm::vec3& position, const glm::vec3& normal,
+           const glm::vec2& texcoord);
 };
 
-struct Mesh {
+struct Mesh : public ListElement {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 

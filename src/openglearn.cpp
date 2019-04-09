@@ -2,11 +2,6 @@
 #include <cstdio>
 #include <iostream>
 
-// clang-format off
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-// clang-format on
-
 #include "mesh.h"
 #include "obj_importer.h"
 #include "ogl.h"
@@ -116,7 +111,7 @@ struct App {
     inline const char* get_name() const { return m_name; }
     inline const char* get_description() const { return m_description; }
 
-  private:
+   private:
     const char* m_name;
     const char* m_description;
     unsigned int m_width;
@@ -138,7 +133,7 @@ int main(int argc, char* argv[]) {
 
 void frame_buffer_size_callback(GLFWwindow* window, const int width,
                                 const int height) {
-    glViewport(0, 0, width, height); // Match new dimensions
+    glViewport(0, 0, width, height);  // Match new dimensions
 }
 
 void process_input(GLFWwindow* window) {
