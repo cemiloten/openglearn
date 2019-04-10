@@ -3,6 +3,11 @@
 #include <string>
 #include <vector>
 
+// clang-format off
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+// clang-format on
+
 #include "freelist.h"
 #include "glm/glm.hpp"
 
@@ -16,11 +21,24 @@ struct Vertex {
            const glm::vec2& texcoord);
 };
 
-struct Mesh : public ListElement {
+struct MeshData {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    Mesh() : vertices(), indices() {}
+    MeshData();
+};
+
+struct Mesh {
+    unsigned int vao;
+    unsigned int vbo;
+    unsigned int ebo;
+
+    size_t index_count;
+    size_t vertex_count;
+
+    Mesh();
+    ~Mesh();
+    Mesh(const MeshData& data);
 };
 
 union Triangle {

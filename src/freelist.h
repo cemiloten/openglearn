@@ -8,10 +8,9 @@ struct ID {
     unsigned int inner_id;
 };
 
-class ListElement {
+class FreeListElement {
     public:
         unsigned int _next;
-
 };
 
 template <typename T>
