@@ -1,28 +1,39 @@
+#pragma once
 
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
+#include <limits>
 
-#include "freelist.h"
+#include "camera.h"
+#include "material.h"
 #include "mesh.h"
 #include "shader.h"
 #include "transform.h"
 
+// struct Handle {
+//     unsigned int id;
+
+//     Handle() : id(invalid_id) {}
+//     inline bool isValid() { return id == invalid_id; }
+
+//   private:
+//     const static unsigned int invalid_id =
+//         std::numeric_limits<unsigned int>::max();
+// };
+
 struct Instance {
     unsigned int mesh_id;
     unsigned int transform_id;
+
+    Instance(unsigned int msh_id, unsigned int trs_id)
+        : mesh_id(msh_id), transform_id(trs_id) {}
 };
 
-class Scene {
+struct Scene {
   public:
-    std::vector<Mesh> _meshes;
+    std::vector<Mesh> meshes;
+    std::vector<Instance> instances;
+    std::vector<Transform> transforms;
+    std::vector<Material> materials;
+    std::vector<Shader> shaders;
 
-    // FreeList<Mesh> _meshes;
-    // FreeList<Transform> _transforms;
-    // FreeList<Instance> _instances;
-    // FreeList<Shader> _shaders;
-    // FreeList<Material> _materials;
-
-    Scene();
+    Camera camera;
 };

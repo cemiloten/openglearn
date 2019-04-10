@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "app.h"
 #include "obj_importer.h"
 
@@ -37,8 +39,8 @@ App::App(const char* name, unsigned int width, unsigned int height)
     Mesh mesh(mesh_data);
     Shader shader("data/shaders/test.vert", "data/shaders/test.frag");
 
-    _scene = std::make_unique<Scene>();
-    _scene->_meshes.push_back(mesh);
+    // _scene = std::make_unique<Scene>();
+    // _scene->_meshes.push_back(mesh);
 
     // _renderer.
     // _scene->_shaders.push_back(shader);

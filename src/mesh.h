@@ -3,12 +3,8 @@
 #include <string>
 #include <vector>
 
-// clang-format off
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-// clang-format on
-
 #include "freelist.h"
+#include "glad/glad.h"
 #include "glm/glm.hpp"
 
 struct Vertex {

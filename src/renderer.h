@@ -5,7 +5,9 @@
 
 class Renderer {
   public:
-    void render(std::unique_ptr<Scene> scene);
+    void renderScene(const std::unique_ptr<Scene> scene);
 
   private:
+    void draw(const Mesh& mesh, const Shader& shader);
+
 };
