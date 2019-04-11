@@ -10,18 +10,18 @@
 #include "scene.h"
 #include "renderer.h"
 
-struct App {
-  public:
-    App(const char* name, unsigned int width, unsigned int height);
-    bool update();
-    int shutdown();
+class App {
+public:
+  App(const char* name, unsigned int width, unsigned int height);
+  bool update();
+  int shutdown();
 
-  private:
-    const char* _name;
-    unsigned int _width;
-    unsigned int _height;
-    GLFWwindow* _window;
+private:
+  const char* _name;
+  unsigned int _width;
+  unsigned int _height;
+  GLFWwindow* _window;
 
-    std::unique_ptr<Scene> _scene;
-    Renderer _renderer;
+  Scene* _scene;
+  Renderer _renderer;
 };

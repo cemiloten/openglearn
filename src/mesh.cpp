@@ -15,9 +15,6 @@ Mesh::Mesh(const MeshData& data) {
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 
-    index_count = data.indices.size();
-    vertex_count = data.vertices.size();
-
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -34,15 +31,19 @@ Mesh::Mesh(const MeshData& data) {
     // Normals
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void*)sizeof(glm::vec3));
+                          (void*)offsetof(Vertex, nrm));
     // Texture coordinates
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void*)(2 * sizeof(glm::vec3)));
+                          (void*)offsetof(Vertex, tex));
     glBindVertexArray(0);
+
+    index_count = static_cast<unsigned int>(data.indices.size());
+    vertex_count = static_cast<unsigned int>(data.vertices.size());
 }
 
 Mesh::~Mesh() {
+    printf("destroyed mesh\n");
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);

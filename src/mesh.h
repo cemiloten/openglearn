@@ -8,36 +8,36 @@
 #include "glm/glm.hpp"
 
 struct Vertex {
-    glm::vec3 pos;
-    glm::vec3 nrm;
-    glm::vec2 tex;
+  glm::vec3 pos;
+  glm::vec3 nrm;
+  glm::vec2 tex;
 
-    Vertex();
-    Vertex(const glm::vec3& position, const glm::vec3& normal,
-           const glm::vec2& texcoord);
+  Vertex();
+  Vertex(const glm::vec3& position, const glm::vec3& normal,
+         const glm::vec2& texcoord);
 };
 
 struct MeshData {
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+  std::vector<Vertex> vertices;
+  std::vector<unsigned int> indices;
 
-    MeshData();
+  MeshData();
 };
 
 struct Mesh {
-    unsigned int vao;
-    unsigned int vbo;
-    unsigned int ebo;
+  unsigned int vao;
+  unsigned int vbo;
+  unsigned int ebo;
 
-    size_t index_count;
-    size_t vertex_count;
+  unsigned int index_count;
+  unsigned int vertex_count;
 
-    Mesh();
-    ~Mesh();
-    Mesh(const MeshData& data);
+  Mesh();
+  ~Mesh();
+  Mesh(const MeshData& data);
 };
 
 union Triangle {
-    Vertex v[3];
-    char data[sizeof(Vertex) * 3];
+  Vertex v[3];
+  char data[sizeof(Vertex) * 3];
 };

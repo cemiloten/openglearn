@@ -20,20 +20,24 @@
 // };
 
 struct Instance {
-    unsigned int mesh_id;
-    unsigned int transform_id;
+  unsigned int mesh_id;
+  unsigned int transform_id;
 
-    Instance(unsigned int msh_id, unsigned int trs_id)
-        : mesh_id(msh_id), transform_id(trs_id) {}
+  Instance(unsigned int msh_id, unsigned int trs_id)
+      : mesh_id(msh_id), transform_id(trs_id) {}
 };
 
 struct Scene {
-  public:
-    std::vector<Mesh> meshes;
-    std::vector<Instance> instances;
-    std::vector<Transform> transforms;
-    std::vector<Material> materials;
-    std::vector<Shader> shaders;
+public:
+  std::vector<Mesh> meshes;
+  std::vector<Instance> instances;
+  // std::vector<Transform> transforms;
+  // std::vector<Material> materials;
+  // std::vector<Shader> shaders;
 
-    Camera camera;
+  Mesh mesh;
+  Shader shader;
+  Camera camera;
+
+  Scene() : meshes(), instances(), shader(), camera() {}
 };

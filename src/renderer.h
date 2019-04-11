@@ -4,10 +4,11 @@
 #include "shader.h"
 
 class Renderer {
-  public:
-    void renderScene(const std::unique_ptr<Scene> scene);
+public:
+  void render(const Scene* scene);
 
-  private:
-    void draw(const Mesh& mesh, const Shader& shader);
-
+private:
+  // unsigned int _back_buffer;
+  // unsigned int _back_buffer_width;
+  // unsigned int _back_buffer_height;
 };

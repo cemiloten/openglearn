@@ -6,9 +6,8 @@
 #include <string>
 
 struct Shader {
-    Shader(const char* vert_source, const char* frag_source);
+  Shader() : id(0) {}
+  Shader(const char* vert_source, const char* frag_source);
 
-    void use();
-
-    unsigned int id;
+  unsigned int id;
 };
