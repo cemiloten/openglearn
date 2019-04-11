@@ -17,12 +17,12 @@ set_property(TARGET openglearn PROPERTY CXX_STANDARD 11)
 set_property(TARGET openglearn PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET openglearn PROPERTY CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(TARGET openglearn PROPERTY CMAKE_BUILD_TYPE Debug)
-target_compile_options(openglearn
-    PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-            "-Wall -Wextra">
-        $<$<CXX_COMPILER_ID:MSVC>:
-            /W4>)
+if (MSVC)
+target_compile_options(openglearn PRIVATE /W4)
+else()
+target_compile_options(openglearn PRIVATE -Wall -Wextra -Werror)
+endif()
+
 
 # GLFW
 set(GLFW_DIR "${LIB_DIR}/glfw")

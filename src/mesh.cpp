@@ -46,8 +46,7 @@ Mesh::Mesh(const MeshData& data) {
 }
 
 Mesh::~Mesh() {
-  printf("destroyed mesh\n");
-  glDeleteVertexArrays(1, &vao);
-  glDeleteBuffers(1, &vbo);
-  glDeleteBuffers(1, &ebo);
+  // glDeleteVertexArrays(1, &vao);
+  // glDeleteBuffers(1, &vbo);
+  // glDeleteBuffers(1, &ebo);
 }

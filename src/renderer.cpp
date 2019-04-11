@@ -1,16 +1,43 @@
 #include "renderer.h"
 #include "glad/glad.h"
+#include "glm/gtc/matrix_transform.hpp"
+
+Renderer::Renderer(unsigned int width, unsigned int height)
+    : _width(width), _height(height) {}
 
 void Renderer::render(const Scene* scene) {
-  //   glBindFramebuffer(GL_FRAMEBUFFER, _back_buffer);
-  //   glViewport(0, 0, _back_buffer_width, _back_buffer_height);
+  glViewport(0, 0, _width, _height);
 
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-  //   glClearDepth(0.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearDepth(0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // const Camera& cam = scene->camera;
+  // const Shader& shader = scene->shader;
+
+  // glm::vec3 eye = cam.position;
+  // eye += glm::vec3(0.0f, 3.0f, -3.0f);
+  // glm::vec3 up = cam.up;
+
+  // glm::mat4 view = glm::lookAt(eye, glm::vec3(0.0f), up);
+  // glm::mat4 proj = glm::perspective(
+      // glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
+
+  // glm::mat4 model(1.0f);
+  // int model_loc = glGetUniformLocation(shader.id, "model");
+  // glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+
+  // glm::mat4 view(1.0f);
+  // int view_loc = glGetUniformLocation(shader.id, "view");
+  // glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+
+  // glm::mat4 proj(1.0f);
+  // int proj_loc = glGetUniformLocation(shader.id, "proj");
+  // glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
 
   glBindVertexArray(scene->mesh.vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scene->mesh.ebo);
+
   glUseProgram(scene->shader.id);
   glDrawElements(GL_TRIANGLES, scene->mesh.vertex_count, GL_UNSIGNED_INT, 0);
 

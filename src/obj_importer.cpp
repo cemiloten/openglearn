@@ -13,7 +13,7 @@ MeshData readObjFile(const std::string& path) {
 
     std::ifstream ifs(path);
     if (ifs.fail()) {
-        printf("file not found\n");
+        printf("OBJ file '%s' not found\n", path.c_str());
         exit(1);
     }
 
@@ -40,6 +40,7 @@ MeshData readObjFile(const std::string& path) {
 }
 
 void readPosition(void* userData, float x, float y, float z, float w) {
+    (void)w;
     ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
     imp->positions.push_back(glm::vec3(x, y, z));
 }
@@ -50,6 +51,7 @@ void readNormal(void* userData, float x, float y, float z) {
 }
 
 void readTexcoord(void* userData, float x, float y, float z) {
+    (void)z;
     ObjImporter* imp = reinterpret_cast<ObjImporter*>(userData);
     imp->texcoords.push_back(glm::vec2(x, y));
 }

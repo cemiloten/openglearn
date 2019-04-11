@@ -26,7 +26,7 @@ class FreeList {
     }
 
     inline bool has(ID id) {
-        return _objects[id.index].id.innerId == id.innerId;
+        return _objects[id.index].id.inner_id == id.inner_id;
     }
 
     inline T& lookup(ID id) { return _objects[id.index]; }
@@ -41,7 +41,7 @@ class FreeList {
             _objects.push_back(obj);
         } else {
             id.index = _free_list;
-            _free_list = _objects[_freelist]._next;
+            _free_list = _objects[_free_list]._next;
         }
         return id;
     }

@@ -6,7 +6,7 @@
 #include "obj_importer.h"
 
 App::App(const char* name, unsigned int width, unsigned int height)
-    : _name(name), _width(width), _height(height) {
+    : _name(name), _width(width), _height(height), _renderer(width, height) {
 
   if (!glfwInit()) {
     exit(1);
@@ -18,14 +18,13 @@ App::App(const char* name, unsigned int width, unsigned int height)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  _window = glfwCreateWindow(_width, _height, "openGLearn", NULL, NULL);
+  _window = glfwCreateWindow(_width, _height, _name, NULL, NULL);
   if (_window == NULL) {
     printf("Error creating window\n");
     glfwTerminate();
     exit(2);
   }
   glfwMakeContextCurrent(_window);
-  // glfwSetFramebufferSizeCallback(_window, frame_buffer_size_callback);
 
   // load OpenGL function pointers
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -46,7 +45,7 @@ App::App(const char* name, unsigned int width, unsigned int height)
 
 bool App::update() {
   while (!glfwWindowShouldClose(_window)) {
-    // process_input(_window);
+    processInput();
 
     _renderer.render(_scene);
     glfwSwapBuffers(_window);
@@ -74,16 +73,16 @@ int App::shutdown() {
   return 0;
 }
 
-void processInput(GLFWwindow* window) {
-  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+void App::processInput() {
+  if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
   }
-  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+  if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
   }
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+  if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
   }
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+  if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
   }
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
+  if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(_window, true);
   }
 }

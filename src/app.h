@@ -13,7 +13,7 @@ public:
   App(const char* name, unsigned int width, unsigned int height);
   bool update();
   int shutdown();
-  void processInput(GLFWwindow* window);
+  void processInput();
 
 private:
   const char* _name;

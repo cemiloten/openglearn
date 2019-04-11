@@ -5,10 +5,10 @@
 
 class Renderer {
 public:
+  Renderer(unsigned int width, unsigned int height);
   void render(const Scene* scene);
 
 private:
-  // unsigned int _back_buffer;
-  // unsigned int _back_buffer_width;
-  // unsigned int _back_buffer_height;
+  unsigned int _width;
+  unsigned int _height;
 };
