@@ -1,6 +1,8 @@
 #include <memory>
 
 #include "app.h"
+#include "camera.h"
+#include "mesh.h"
 #include "obj_importer.h"
 
 App::App(const char* name, unsigned int width, unsigned int height)
@@ -32,13 +34,14 @@ App::App(const char* name, unsigned int width, unsigned int height)
   }
 
   glEnable(GL_DEPTH_TEST);
-  // glCullFace(GL_BACK);
+  glCullFace(GL_BACK);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   MeshData mesh_data = readObjFile("data/models/triangle.obj");
   _scene = new Scene;
   _scene->mesh = Mesh(mesh_data);
   _scene->shader = Shader("data/shaders/test.vert", "data/shaders/test.frag");
+  _scene->camera = Camera();
 }
 
 bool App::update() {
@@ -62,7 +65,6 @@ bool App::update() {
     //   glDrawArrays(GL_TRIANGLES, 0, 36);
     // }
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
   }
   return false;
 }
@@ -70,4 +72,18 @@ bool App::update() {
 int App::shutdown() {
   glfwTerminate();
   return 0;
+}
+
+void processInput(GLFWwindow* window) {
+  if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+  }
+  if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+  }
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+  }
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
 }

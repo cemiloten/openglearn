@@ -11,40 +11,43 @@ MeshData::MeshData() : vertices(), indices() {}
 Mesh::Mesh() : vao(0), vbo(0), ebo(0), index_count(0), vertex_count(0) {}
 
 Mesh::Mesh(const MeshData& data) {
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+  glGenVertexArrays(1, &vao);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBindVertexArray(vao);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER, data.vertices.size() * sizeof(Vertex),
-                 data.vertices.data(), GL_STATIC_DRAW);
+  // Vertex data
+  glBufferData(GL_ARRAY_BUFFER, data.vertices.size() * sizeof(Vertex),
+               data.vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 data.indices.size() * sizeof(unsigned int),
-                 data.indices.data(), GL_STATIC_DRAW);
-    // Positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    // Normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void*)offsetof(Vertex, nrm));
-    // Texture coordinates
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void*)offsetof(Vertex, tex));
-    glBindVertexArray(0);
+  // Indices
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               data.indices.size() * sizeof(unsigned int), data.indices.data(),
+               GL_STATIC_DRAW);
 
-    index_count = static_cast<unsigned int>(data.indices.size());
-    vertex_count = static_cast<unsigned int>(data.vertices.size());
+  // Positions
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+  // Normals
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                        (void*)offsetof(Vertex, nrm));
+  // Texture coordinates
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                        (void*)offsetof(Vertex, tex));
+  glBindVertexArray(0);
+
+  index_count = static_cast<unsigned int>(data.indices.size());
+  vertex_count = static_cast<unsigned int>(data.vertices.size());
 }
 
 Mesh::~Mesh() {
-    printf("destroyed mesh\n");
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
+  printf("destroyed mesh\n");
+  glDeleteVertexArrays(1, &vao);
+  glDeleteBuffers(1, &vbo);
+  glDeleteBuffers(1, &ebo);
 }
