@@ -1,4 +1,4 @@
-#include "mesh.h"
+#include "mesh.hpp"
 
 Vertex::Vertex() : pos(0.0f), nrm(0.0f), tex(0.0f) {}
 

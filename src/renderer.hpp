@@ -1,7 +1,7 @@
 #pragma once
 
-#include "scene.h"
-#include "shader.h"
+#include "scene.hpp"
+#include "shader.hpp"
 
 class Renderer {
 public:

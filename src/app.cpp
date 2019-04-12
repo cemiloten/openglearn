@@ -1,12 +1,14 @@
 #include <memory>
 
-#include "app.h"
-#include "camera.h"
-#include "mesh.h"
-#include "obj_importer.h"
+#include "app.hpp"
+#include "camera.hpp"
+#include "mesh.hpp"
+#include "obj_importer.hpp"
+#include "shader.hpp"
 
-App::App(const char* name, unsigned int width, unsigned int height)
-    : _name(name), _width(width), _height(height), _renderer(width, height) {
+App::App(unsigned int width, unsigned int height)
+    : _renderer(width, height), _last_mouse_pos_x(0.5f * width),
+      _last_mouse_pos_y(0.5f * height) {
 
   if (!glfwInit()) {
     exit(1);
@@ -18,13 +20,14 @@ App::App(const char* name, unsigned int width, unsigned int height)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  _window = glfwCreateWindow(_width, _height, _name, NULL, NULL);
-  if (_window == NULL) {
-    printf("Error creating window\n");
-    glfwTerminate();
-    exit(2);
-  }
+  _window = glfwCreateWindow(width, height, "OpenGL", nullptr, nullptr);
+  assert(_window != NULL && "Could not create GLFW window");
+
   glfwMakeContextCurrent(_window);
+  glfwSetWindowUserPointer(_window, this);
+
+  // Callbacks
+  glfwSetCursorPosCallback(_window, onCursorPos);
 
   // load OpenGL function pointers
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -32,11 +35,15 @@ App::App(const char* name, unsigned int width, unsigned int height)
     exit(3);
   }
 
-  glEnable(GL_DEPTH_TEST);
-  glCullFace(GL_BACK);
+  glfwSetCursorPos(_window, _last_mouse_pos_x, _last_mouse_pos_y);
+
+  // glfwSwapInterval(1);
+  // glEnable(GL_DEPTH_TEST);
+  // glCullFace(GL_BACK);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-  MeshData mesh_data = readObjFile("data/models/triangle.obj");
+  // Initalize data
+  MeshData mesh_data = readObjFile("data/models/cube.obj");
   _scene = new Scene;
   _scene->mesh = Mesh(mesh_data);
   _scene->shader = Shader("data/shaders/test.vert", "data/shaders/test.frag");
@@ -48,22 +55,9 @@ bool App::update() {
     processInput();
 
     _renderer.render(_scene);
+
     glfwSwapBuffers(_window);
     glfwPollEvents();
-
-    // for (unsigned int i = 0; i < 10; ++i) {
-    //   glm::mat4 model = glm::mat4(1.0f);
-    //   model = glm::translate(model, cubePositions[i]);
-    //   if (i % 2 == 0) {
-    //     float angle = 20.0f * i;
-    //     model = glm::rotate(model, (float)glfwGetTime() *
-    //     glm::radians(angle),
-    //                         glm::vec3(1.0f, 0.3f, 0.5f));
-    //   }
-    //   Shader::set_mat4(shader, "model", model);
-    //   glDrawArrays(GL_TRIANGLES, 0, 36);
-    // }
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   }
   return false;
 }
@@ -74,15 +68,59 @@ int App::shutdown() {
 }
 
 void App::processInput() {
-  if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+  float speed = 0.1f;
+  Camera& cam = _scene->camera;
+
+  if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS ||
+      glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
+    cam.position -= cam.right * speed;
+    printf("pressing left\n");
   }
-  if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+
+  if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS ||
+      glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
+    cam.position += cam.right * speed;
+    printf("pressing right\n");
   }
-  if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
+
+  if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS ||
+      glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
+    cam.position += cam.front * speed;
+    printf("pressing up\n");
   }
-  if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+
+  if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS ||
+      glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
+    cam.position -= cam.front * speed;
+    printf("pressing down\n");
   }
+
   if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(_window, true);
   }
+}
+
+void App::onCursorPos(float x, float y) {
+  float dx = x - _last_mouse_pos_x;
+  float dy = _last_mouse_pos_y - y;
+  _last_mouse_pos_x = x;
+  _last_mouse_pos_y = y;
+
+  float mouse_sensitivity = 0.15f;
+  Camera& cam = _scene->camera;
+
+  cam.yaw += dx * mouse_sensitivity;
+  cam.pitch += dy * mouse_sensitivity;
+  if (cam.pitch > 89.0f) {
+    cam.pitch = 89.0f;
+  }
+  if (cam.pitch < -89.0f) {
+    cam.pitch = -89.0f;
+  }
+  cam.updateVectors();
+}
+
+void App::onCursorPos(GLFWwindow* window, double x, double y) {
+  App* app = static_cast<App*>(glfwGetWindowUserPointer(window));
+  app->onCursorPos(static_cast<float>(x), static_cast<float>(y));
 }

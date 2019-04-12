@@ -2,11 +2,11 @@
 
 #include <limits>
 
-#include "camera.h"
-#include "material.h"
-#include "mesh.h"
-#include "shader.h"
-#include "transform.h"
+#include "camera.hpp"
+#include "material.hpp"
+#include "mesh.hpp"
+#include "shader.hpp"
+#include "transform.hpp"
 
 // struct Handle {
 //     unsigned int id;

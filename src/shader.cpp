@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "shader.h"
+#include "shader.hpp"
 
 Shader::Shader(const char* vert_path, const char* frag_path) {
   std::string vert_source_;

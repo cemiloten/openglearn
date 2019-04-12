@@ -1,7 +1,7 @@
-#include "app.h"
+#include "app.hpp"
 
 int main() {
-    App app("OpenGLearn", 800, 600);
+    App app(1280, 720);
     while (app.update()) {}
     app.shutdown();
     return 0;
