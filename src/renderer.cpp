@@ -34,7 +34,7 @@ void Renderer::render(const Scene* scene) {
 
   glUseProgram(scene->shader.id);
 
-  glDrawElements(GL_TRIANGLES, scene->mesh.vertex_count, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, scene->mesh.index_count, GL_UNSIGNED_INT, 0);
 
   //   const Camera& cam = scene->camera;
   //   for (const auto& instance : scene->instances) {

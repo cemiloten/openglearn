@@ -38,11 +38,21 @@ App::App(unsigned int width, unsigned int height)
   glfwSetCursorPos(_window, _last_mouse_pos_x, _last_mouse_pos_y);
 
   // glfwSwapInterval(1);
-  // glEnable(GL_DEPTH_TEST);
-  // glCullFace(GL_BACK);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glEnable(GL_DEPTH_TEST);
+  glCullFace(GL_BACK);
+
+  // // clang-format off
+  // std::vector<Vertex> vertices{
+  //     { -0.5f, 0.0f, 0.5f,     0.0f, 1.0f, 0.0f,    0.0f, 0.0f }, // bottom left
+  //     { 0.5f,  0.0f, 0.5f,     0.0f, 1.0f, 0.0f,    1.0f, 0.0f }, // bottom right
+  //     { -0.5f, 0.0f, -0.5f,    0.0f, 1.0f, 0.0f,    0.0f, 1.0f }, // top left
+  //     { 0.5f,  0.0f, -0.5f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f } // top right
+  // }; // clang-format on
+
+  // std::vector<unsigned int> indices{0, 1, 3, 3, 2, 0};
 
   // Initalize data
+  // MeshData mesh_data(vertices, indices);
   MeshData mesh_data = readObjFile("data/models/cube.obj");
   _scene = new Scene;
   _scene->mesh = Mesh(mesh_data);
@@ -71,28 +81,31 @@ void App::processInput() {
   float speed = 0.1f;
   Camera& cam = _scene->camera;
 
+  if (glfwGetKey(_window, GLFW_KEY_1) == GLFW_PRESS) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_2) == GLFW_PRESS) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  }
+
   if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS ||
       glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
     cam.position -= cam.right * speed;
-    printf("pressing left\n");
   }
 
   if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS ||
       glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
     cam.position += cam.right * speed;
-    printf("pressing right\n");
   }
 
   if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS ||
       glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
     cam.position += cam.front * speed;
-    printf("pressing up\n");
   }
 
   if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS ||
       glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
     cam.position -= cam.front * speed;
-    printf("pressing down\n");
   }
 
   if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -106,7 +119,7 @@ void App::onCursorPos(float x, float y) {
   _last_mouse_pos_x = x;
   _last_mouse_pos_y = y;
 
-  float mouse_sensitivity = 0.15f;
+  float mouse_sensitivity = 0.35f;
   Camera& cam = _scene->camera;
 
   cam.yaw += dx * mouse_sensitivity;

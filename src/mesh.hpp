@@ -12,6 +12,8 @@ struct Vertex {
   glm::vec2 tex;
 
   Vertex();
+  Vertex(float vx, float vy, float vz, float nx, float ny, float nz, float tx,
+         float ty);
   Vertex(const glm::vec3& position, const glm::vec3& normal,
          const glm::vec2& texcoord);
 };
@@ -21,6 +23,8 @@ struct MeshData {
   std::vector<unsigned int> indices;
 
   MeshData();
+  MeshData(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices)
+      : vertices(_vertices), indices(_indices) {}
 };
 
 struct Mesh {
