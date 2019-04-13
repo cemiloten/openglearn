@@ -40,6 +40,9 @@ protected:
     glfwTerminate();
   }
 
+  IGLApp(const IGLApp&) = delete;
+  void operator=(const IGLApp&) = delete;
+
   virtual void run() = 0;
   virtual void update() = 0;
   virtual void processInput() = 0;

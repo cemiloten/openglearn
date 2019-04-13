@@ -15,9 +15,27 @@ public:
     glCullFace(GL_BACK);
 
     // Initalize data
-    MeshData mesh_data = readObjFile(obj_path);
     _scene = new Scene;
-    _scene->mesh = Mesh(mesh_data);
+
+    MeshData mesh_data = readObjFile(obj_path);
+    _scene->meshes.push_back(Mesh(mesh_data));
+    _scene->transforms.resize(10);
+    _scene->transforms[0].translation = glm::vec3( 0.0f,  0.0f,  0.0f);
+    _scene->transforms[1].translation = glm::vec3( 1.0f,  0.0f,  0.0f);
+    _scene->transforms[2].translation = glm::vec3(-1.0f,  0.0f,  0.0f);
+    _scene->transforms[3].translation = glm::vec3( 0.0f, -1.0f,  0.3f);
+    _scene->transforms[4].translation = glm::vec3( 0.0f,  1.0f,  0.0f);
+    _scene->transforms[5].translation = glm::vec3(-2.7f,  0.0f, -0.5f);
+    _scene->transforms[6].translation = glm::vec3( 2.3f, -0.0f, -0.5f);
+    _scene->transforms[7].translation = glm::vec3( 1.5f,  2.0f, -2.5f);
+    _scene->transforms[8].translation = glm::vec3( 1.5f,  0.2f, -1.5f);
+    _scene->transforms[9].translation = glm::vec3(-1.3f,  1.0f, -1.5f);
+
+    _scene->instances.reserve(10);
+    for (unsigned short int i = 0; i < 10; ++i) {
+      _scene->instances.push_back(Instance(0, i));
+    }
+
     _scene->shader = Shader("data/shaders/test.vert", "data/shaders/test.frag");
     _scene->camera = Camera();
   }

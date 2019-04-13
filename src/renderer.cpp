@@ -26,13 +26,22 @@ void Renderer::render(const Scene* scene) {
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
 
   glm::mat4 model(1.0f);
-  int model_loc = glGetUniformLocation(shader.id, "model");
-  glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 
-  glBindVertexArray(scene->mesh.vao);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scene->mesh.ebo);
+  for (size_t i = 0; i < scene->instances.size(); ++i) {
+    const Instance& instance = scene->instances[i];
+    const Mesh& mesh = scene->meshes[instance.mesh.id];
+    const Transform& transform = scene->transforms[instance.transform.id];
 
-  glUseProgram(scene->shader.id);
+    glUseProgram(scene->shader.id);
 
-  glDrawElements(GL_TRIANGLES, scene->mesh.index_count, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(mesh.vao);
+    model = glm::translate(model, transform.translation);
+    int model_loc = glGetUniformLocation(shader.id, "model");
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
+    glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
+  }
+
+
 }

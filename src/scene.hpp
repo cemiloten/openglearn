@@ -8,34 +8,36 @@
 #include "shader.hpp"
 #include "transform.hpp"
 
-// struct Handle {
-//     unsigned int id;
+struct Handle {
+  unsigned short int id;
 
-//     Handle() : id(invalid_id) {}
-//     inline bool isValid() { return id == invalid_id; }
+  Handle() : id(invalid_id) {}
+  Handle(unsigned short int _id) : id(_id) {}
 
-//   private:
-//     const static unsigned int invalid_id =
-//         std::numeric_limits<unsigned int>::max();
-// };
+  inline bool isValid() { return id == invalid_id; }
+
+private:
+  const static unsigned int invalid_id =
+      std::numeric_limits<unsigned short int>::max();
+};
 
 struct Instance {
-  unsigned int mesh_id;
-  unsigned int transform_id;
+  Handle mesh;
+  Handle transform;
 
-  Instance(unsigned int msh_id, unsigned int trs_id)
-      : mesh_id(msh_id), transform_id(trs_id) {}
+  Instance() : mesh(), transform() {}
+  Instance(unsigned int mesh_handle, unsigned int transform_handle)
+      : mesh(Handle(mesh_handle)), transform(Handle(transform_handle)) {}
 };
 
 struct Scene {
 public:
   std::vector<Mesh> meshes;
   std::vector<Instance> instances;
-  // std::vector<Transform> transforms;
+  std::vector<Transform> transforms;
   // std::vector<Material> materials;
   // std::vector<Shader> shaders;
 
-  Mesh mesh;
   Shader shader;
   Camera camera;
 
