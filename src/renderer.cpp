@@ -13,8 +13,9 @@ void Renderer::render(const Scene* scene) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   const Shader& shader = scene->shader;
+  const Camera& camera = scene->camera;
 
-  glm::mat4 view = scene->camera.getViewMatrix();
+  glm::mat4 view = glm::translate(camera.getViewMatrix(), glm::vec3(0.0f, 0.0f, 3.0f));
   int view_loc = glGetUniformLocation(shader.id, "view");
   glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -25,7 +26,6 @@ void Renderer::render(const Scene* scene) {
   glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
 
   glm::mat4 model(1.0f);
-  // model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
   int model_loc = glGetUniformLocation(shader.id, "model");
   glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -35,10 +35,4 @@ void Renderer::render(const Scene* scene) {
   glUseProgram(scene->shader.id);
 
   glDrawElements(GL_TRIANGLES, scene->mesh.index_count, GL_UNSIGNED_INT, 0);
-
-  //   const Camera& cam = scene->camera;
-  //   for (const auto& instance : scene->instances) {
-  //     const Mesh& mesh = scene->meshes[instance.mesh_id];
-  //     draw(mesh, scene->shader);
-  //   }
 }
