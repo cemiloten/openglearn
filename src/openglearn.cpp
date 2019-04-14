@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "glapp.hpp"
 #include "obj_importer.hpp"
 #include "renderer.hpp"
@@ -17,36 +19,46 @@ public:
     // Initalize data
     _scene = new Scene;
 
+    MeshData ground = readObjFile("data/models/quad.obj");
+    _scene->meshes.push_back(Mesh(ground));
+
     MeshData mesh_data = readObjFile(obj_path);
     _scene->meshes.push_back(Mesh(mesh_data));
+
     _scene->transforms.resize(10);
-    _scene->transforms[0].translation = glm::vec3( 0.0f,  0.0f,  0.0f);
-    _scene->transforms[1].translation = glm::vec3( 1.0f,  0.0f,  0.0f);
-    _scene->transforms[2].translation = glm::vec3(-1.0f,  0.0f,  0.0f);
-    _scene->transforms[3].translation = glm::vec3( 0.0f, -1.0f,  0.3f);
-    _scene->transforms[4].translation = glm::vec3( 0.0f,  1.0f,  0.0f);
-    _scene->transforms[5].translation = glm::vec3(-2.7f,  0.0f, -0.5f);
-    _scene->transforms[6].translation = glm::vec3( 2.3f, -0.0f, -0.5f);
-    _scene->transforms[7].translation = glm::vec3( 1.5f,  2.0f, -2.5f);
-    _scene->transforms[8].translation = glm::vec3( 1.5f,  0.2f, -1.5f);
-    _scene->transforms[9].translation = glm::vec3(-1.3f,  1.0f, -1.5f);
+    _scene->transforms[0].scale = glm::vec3(10.0f, 10.0f, 10.0f); // Ground
+
+    _scene->transforms[1].translation = glm::vec3(1.0f, 0.0f, 0.0f);
+    _scene->transforms[2].translation = glm::vec3(-1.0f, 0.0f, 0.0f);
+    _scene->transforms[3].translation = glm::vec3(0.0f, -1.0f, 0.3f);
+    _scene->transforms[4].translation = glm::vec3(0.0f, 1.0f, 0.0f);
+    _scene->transforms[5].translation = glm::vec3(-2.7f, 0.0f, -0.5f);
+    _scene->transforms[6].translation = glm::vec3(2.3f, -0.0f, -0.5f);
+    _scene->transforms[7].translation = glm::vec3(0.5f, 0.0f, -2.5f);
+    _scene->transforms[8].translation = glm::vec3(0.5f, 0.0f, 1.5f);
+    _scene->transforms[9].translation = glm::vec3(-0.3f, 3.0f, -0.5f);
 
     _scene->instances.reserve(10);
-    for (unsigned short int i = 0; i < 10; ++i) {
-      _scene->instances.push_back(Instance(0, i));
+    _scene->instances.push_back(Instance(0, 0));
+
+    for (unsigned short int i = 1; i < 10; ++i) {
+      _scene->instances.push_back(Instance(1, i));
+      Transform& trs = _scene->transforms[_scene->instances[i].transform.id];
+      printf("scale is : %f, %f, %f\n", trs.scale.x, trs.scale.y, trs.scale.z);
     }
 
     _scene->shader = Shader("data/shaders/test.vert", "data/shaders/test.frag");
     _scene->camera = Camera();
   }
 
-  ~App() {
-    delete _scene;
-  }
+  ~App() { delete _scene; }
 
   virtual void run() override {
     while (!glfwWindowShouldClose(_window)) {
+      float current_time = static_cast<float>(glfwGetTime());
+      delta_time = current_time - last_time;
       update();
+      last_time = current_time;
     }
   }
 
@@ -59,7 +71,7 @@ private:
   }
 
   virtual void processInput() override {
-    float speed = 0.1f;
+    float speed = 1.0f;
     Camera& cam = _scene->camera;
 
     if (glfwGetKey(_window, GLFW_KEY_1) == GLFW_PRESS) {
@@ -74,19 +86,19 @@ private:
 
     if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS ||
         glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-      cam.position -= cam.right * speed;
+      cam.position -= cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS ||
         glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-      cam.position += cam.right * speed;
+      cam.position += cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS ||
         glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-      cam.position += cam.front * speed;
+      cam.position += cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS ||
         glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-      cam.position -= cam.front * speed;
+      cam.position -= cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(_window, true);
@@ -117,17 +129,24 @@ private:
   Scene* _scene;
   Renderer _renderer;
 
+  float delta_time;
+  float last_time;
   float _last_mouse_pos_x;
   float _last_mouse_pos_y;
 };
 
 int main(int argc, const char* argv[]) {
-  if (argc != 2) {
-    printf("Error: give obj file argument\n");
+  if (argc == 2) {
+    App app(1280, 720, argv[1]);
+    app.run();
+  } else if (argc == 4) {
+    unsigned int w(atoi(argv[2]));
+    unsigned int h(atoi(argv[3]));
+    App app(w, h, argv[1]);
+    app.run();
+  } else {
+    printf("Usage: obj file path || obj file path, width, height\n");
     return 1;
   }
-
-  App app(1280, 720, argv[1]);
-  app.run();
   return 0;
 }

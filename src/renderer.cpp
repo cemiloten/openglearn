@@ -7,9 +7,7 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     : _width(width), _height(height) {}
 
 void Renderer::render(const Scene* scene) {
-  glViewport(0, 0, _width, _height);
-
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   const Shader& shader = scene->shader;
@@ -29,13 +27,16 @@ void Renderer::render(const Scene* scene) {
 
   for (size_t i = 0; i < scene->instances.size(); ++i) {
     const Instance& instance = scene->instances[i];
+
     const Mesh& mesh = scene->meshes[instance.mesh.id];
     const Transform& transform = scene->transforms[instance.transform.id];
 
     glUseProgram(scene->shader.id);
 
     glBindVertexArray(mesh.vao);
+    model = glm::scale(model, transform.scale);
     model = glm::translate(model, transform.translation);
+
     int model_loc = glGetUniformLocation(shader.id, "model");
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 

@@ -36,7 +36,6 @@ public:
   std::vector<Instance> instances;
   std::vector<Transform> transforms;
   // std::vector<Material> materials;
-  // std::vector<Shader> shaders;
 
   Shader shader;
   Camera camera;
