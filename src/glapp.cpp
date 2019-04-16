@@ -5,6 +5,10 @@
 #include "glapp.hpp"
 
 IGLApp::IGLApp(unsigned int width, unsigned int height) {
+  int major, minor, rev;
+  glfwGetVersion(&major, &minor, &rev);
+  printf("GLFW version: %d.%d.%d\n", major, minor, rev);
+  glfwSetErrorCallback(IGLApp::onError);
   if (!glfwInit()) {
     printf("Failed to initialize GLFW\n");
     exit(1);
@@ -42,6 +46,10 @@ void IGLApp::onCursorPos(float xpos, float ypos) {
 
 void IGLApp::onFrameBufferSize(int width, int height) {
   glViewport(0, 0, width, height);
+}
+
+void IGLApp::onError(int error, const char* description) {
+    fprintf(stderr, "Error %d, %s\n", error, description);
 }
 
 void IGLApp::onCursorPos(GLFWwindow* window, double xpos, double ypos) {

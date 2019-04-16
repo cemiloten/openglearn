@@ -22,6 +22,7 @@ protected:
   virtual void onFrameBufferSize(int width, int height);
 
 private:
+  static void onError(int error, const char* description);
   static void onCursorPos(GLFWwindow* window, double xpos, double ypos);
   static void onFrameBufferSize(GLFWwindow* window, int width, int height);
 };
