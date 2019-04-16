@@ -3,19 +3,25 @@
 out vec4 frag_color;
 
 in vec2 texcoord;
-
-// uniform sampler2D texture1;
-// uniform sampler2D texture2;
-// uniform float blending;
+in vec3 normal;
+in vec3 world_pos;
 
 uniform vec3 ambient;
 uniform vec3 diffuse;
 uniform vec3 specular;
+uniform vec3 light_color;
+uniform vec3 light_pos;
 
 void main() {
-  // vec4 tex1 = texture(texture1, texcoord);
-  // vec4 tex2 = texture(texture2, texcoord);
-  // frag_color = mix(tex1, tex2, blending);
+  float ambient_strength = 0.1;
+  vec3 ambient = ambient_strength * light_color;
 
-  frag_color = vec4(0.5, 0.5, 0.5, 1.0);
+  vec3 norm = normalize(normal);
+  vec3 light_direction = normalize(light_pos - world_pos);
+
+  float light_intensity = max(dot(norm, light_direction), 0.0);
+  vec3 light = light_intensity * light_color;
+
+  vec3 result = (ambient + light) * diffuse;
+  frag_color = vec4(result, 1.0f);
 }

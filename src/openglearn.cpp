@@ -32,14 +32,15 @@ public:
     _scene->transforms.resize(2);
 
     // object
-    _scene->materials.push_back(Material(0));
+    _scene->materials.push_back(Material(
+        0, glm::vec3(0.5f), glm::vec3(1.0f, 0.5f, 0.0f), glm::vec3(0.0f)));
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light
-    _scene->transforms[1].translation += glm::vec3(2.0f);
+    _scene->transforms[1].translation += glm::vec3(1.3f, 1.2f, -1.5f);
+    _scene->transforms[1].scale *= 0.4f;
     _scene->materials.push_back(Material(1));
     _scene->instances.push_back(Instance(0, 1, 1));
-
   }
 
   ~App() { delete _scene; }
@@ -62,7 +63,7 @@ private:
   }
 
   virtual void processInput() override {
-    float speed = 2.0f;
+    float speed = 3.0f;
     Camera& cam = _scene->camera;
 
     // Left
@@ -70,7 +71,7 @@ private:
       cam.position -= cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-      // _scene->transforms[0].translation.x -= 1.0f * speed * delta_time;
+      _scene->transforms[1].translation += glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
     }
 
     // Right
@@ -78,7 +79,7 @@ private:
       cam.position += cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-      // _scene->transforms[0].translation.x += 1.0f * speed * delta_time;
+      _scene->transforms[1].translation -= glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
     }
 
     // Up
@@ -86,7 +87,7 @@ private:
       cam.position += cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
-      // _scene->transforms[0].translation.z -= 1.0f * speed * delta_time;
+      _scene->transforms[1].translation += glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
     }
 
     // Down
@@ -94,7 +95,7 @@ private:
       cam.position -= cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-      // _scene->transforms[0].translation.z += 1.0f * speed * delta_time;
+      _scene->transforms[1].translation -= glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
     }
 
     // View mode
@@ -144,15 +145,18 @@ private:
 };
 
 int main(int argc, const char* argv[]) {
+  unsigned int w = 640;
+  unsigned int h = 480;
+
   if (argc == 1) {
-    App app(1280, 720, "data/models/cube.obj");
+    App app(w, h, "data/models/cube.obj");
     app.run();
   } else if (argc == 2) {
-    App app(1280, 720, argv[1]);
+    App app(w, h, argv[1]);
     app.run();
   } else if (argc == 4) {
-    unsigned int w(atoi(argv[2]));
-    unsigned int h(atoi(argv[3]));
+    w = atoi(argv[2]);
+    h = atoi(argv[3]);
     App app(w, h, argv[1]);
     app.run();
   } else {

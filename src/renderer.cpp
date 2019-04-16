@@ -19,6 +19,7 @@ void Renderer::render(const Scene* scene) {
       glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
 
   glm::mat4 model(1.0f);
+  glm::vec3 light_pos = scene->transforms[1].translation;
 
   for (size_t i = 0; i < scene->instances.size(); ++i) {
     const Instance& instance = scene->instances[i];
@@ -28,12 +29,14 @@ void Renderer::render(const Scene* scene) {
     const Material& material = scene->getMaterial(instance);
 
     glBindVertexArray(mesh.vao);
-    model = glm::scale(model, transform.scale);
     model = glm::translate(model, transform.translation);
+    model = glm::scale(model, transform.scale);
 
     const Shader& shader = scene->getShader(material);
     shader.use();
     shader.setMaterialUniforms(material);
+    shader.setVec3("light_color", glm::vec3(1.0f));
+    shader.setVec3("light_pos", light_pos);
     shader.setMat4("model", model);
     shader.setMat4("view", view);
     shader.setMat4("projection", proj);

@@ -8,7 +8,6 @@
 #include "glm/vec3.hpp"
 #include "material.hpp"
 
-
 struct Shader {
   unsigned int id;
 
@@ -18,8 +17,8 @@ struct Shader {
   inline void use() const { glUseProgram(id); }
 
   inline void setVec3(const std::string& name, glm::vec3 value) const {
-    glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE,
-                       glm::value_ptr(value));
+    glUniform3fv(glGetUniformLocation(id, name.c_str()), 1,
+                 glm::value_ptr(value));
   }
 
   inline void setMat4(const std::string& name, glm::mat4 value) const {
