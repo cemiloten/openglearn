@@ -9,6 +9,7 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   glfwGetVersion(&major, &minor, &rev);
   printf("GLFW version: %d.%d.%d\n", major, minor, rev);
   glfwSetErrorCallback(IGLApp::onError);
+
   if (!glfwInit()) {
     printf("Failed to initialize GLFW\n");
     exit(1);

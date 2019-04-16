@@ -19,36 +19,27 @@ public:
     // Initalize data
     _scene = new Scene;
 
-    MeshData ground = readObjFile("data/models/quad.obj");
-    _scene->meshes.push_back(Mesh(ground));
+    _scene->camera = Camera();
 
     MeshData mesh_data = readObjFile(obj_path);
     _scene->meshes.push_back(Mesh(mesh_data));
 
-    _scene->transforms.resize(10);
-    _scene->transforms[0].scale = glm::vec3(10.0f, 10.0f, 10.0f); // Ground
+    _scene->shaders.push_back(
+        Shader("data/shaders/test.vert", "data/shaders/test.frag"));
+    _scene->shaders.push_back(
+        Shader("data/shaders/light.vert", "data/shaders/light.frag"));
 
-    _scene->transforms[1].translation = glm::vec3(1.0f, 0.0f, 0.0f);
-    _scene->transforms[2].translation = glm::vec3(-1.0f, 0.0f, 0.0f);
-    _scene->transforms[3].translation = glm::vec3(0.0f, -1.0f, 0.3f);
-    _scene->transforms[4].translation = glm::vec3(0.0f, 1.0f, 0.0f);
-    _scene->transforms[5].translation = glm::vec3(-2.7f, 0.0f, -0.5f);
-    _scene->transforms[6].translation = glm::vec3(2.3f, -0.0f, -0.5f);
-    _scene->transforms[7].translation = glm::vec3(0.5f, 0.0f, -2.5f);
-    _scene->transforms[8].translation = glm::vec3(0.5f, 0.0f, 1.5f);
-    _scene->transforms[9].translation = glm::vec3(-0.3f, 3.0f, -0.5f);
+    _scene->transforms.resize(2);
 
-    _scene->instances.reserve(10);
-    _scene->instances.push_back(Instance(0, 0));
+    // object
+    _scene->materials.push_back(Material(0));
+    _scene->instances.push_back(Instance(0, 0, 0));
 
-    for (unsigned short int i = 1; i < 10; ++i) {
-      _scene->instances.push_back(Instance(1, i));
-      Transform& trs = _scene->transforms[_scene->instances[i].transform.id];
-      printf("scale is : %f, %f, %f\n", trs.scale.x, trs.scale.y, trs.scale.z);
-    }
+    // light
+    _scene->transforms[1].translation += glm::vec3(2.0f);
+    _scene->materials.push_back(Material(1));
+    _scene->instances.push_back(Instance(0, 1, 1));
 
-    _scene->shader = Shader("data/shaders/test.vert", "data/shaders/test.frag");
-    _scene->camera = Camera();
   }
 
   ~App() { delete _scene; }
@@ -71,9 +62,42 @@ private:
   }
 
   virtual void processInput() override {
-    float speed = 1.0f;
+    float speed = 2.0f;
     Camera& cam = _scene->camera;
 
+    // Left
+    if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
+      cam.position -= cam.right * speed * delta_time;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+      // _scene->transforms[0].translation.x -= 1.0f * speed * delta_time;
+    }
+
+    // Right
+    if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
+      cam.position += cam.right * speed * delta_time;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+      // _scene->transforms[0].translation.x += 1.0f * speed * delta_time;
+    }
+
+    // Up
+    if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
+      cam.position += cam.front * speed * delta_time;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
+      // _scene->transforms[0].translation.z -= 1.0f * speed * delta_time;
+    }
+
+    // Down
+    if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
+      cam.position -= cam.front * speed * delta_time;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+      // _scene->transforms[0].translation.z += 1.0f * speed * delta_time;
+    }
+
+    // View mode
     if (glfwGetKey(_window, GLFW_KEY_1) == GLFW_PRESS) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
@@ -83,23 +107,7 @@ private:
     if (glfwGetKey(_window, GLFW_KEY_3) == GLFW_PRESS) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
     }
-
-    if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS ||
-        glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-      cam.position -= cam.right * speed * delta_time;
-    }
-    if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS ||
-        glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-      cam.position += cam.right * speed * delta_time;
-    }
-    if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS ||
-        glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-      cam.position += cam.front * speed * delta_time;
-    }
-    if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS ||
-        glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-      cam.position -= cam.front * speed * delta_time;
-    }
+    // Quit
     if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(_window, true);
     }
@@ -136,7 +144,10 @@ private:
 };
 
 int main(int argc, const char* argv[]) {
-  if (argc == 2) {
+  if (argc == 1) {
+    App app(1280, 720, "data/models/cube.obj");
+    app.run();
+  } else if (argc == 2) {
     App app(1280, 720, argv[1]);
     app.run();
   } else if (argc == 4) {

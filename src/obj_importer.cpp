@@ -17,7 +17,6 @@ MeshData readObjFile(const std::string& path) {
     exit(1);
   }
 
-  std::cout << "starting to read " << path << std::endl;
   std::string warn;
   std::string err;
 

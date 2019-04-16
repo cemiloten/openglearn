@@ -8,11 +8,14 @@ in vec2 texcoord;
 // uniform sampler2D texture2;
 // uniform float blending;
 
-void main()
-{
-    // vec4 tex1 = texture(texture1, texcoord);
-    // vec4 tex2 = texture(texture2, texcoord);
-    // frag_color = mix(tex1, tex2, blending);
+uniform vec3 ambient;
+uniform vec3 diffuse;
+uniform vec3 specular;
 
-    frag_color = vec4(0.5, 0.5, 0.5, 1.0);
+void main() {
+  // vec4 tex1 = texture(texture1, texcoord);
+  // vec4 tex2 = texture(texture2, texcoord);
+  // frag_color = mix(tex1, tex2, blending);
+
+  frag_color = vec4(0.5, 0.5, 0.5, 1.0);
 }
