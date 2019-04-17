@@ -20,7 +20,8 @@ public:
     _scene = new Scene;
 
     _scene->camera = Camera();
-    _scene->camera.position += glm::vec3(0.0f, 0.0f, 2.0f);
+    _scene->camera.position += glm::vec3(0.0f, 2.0f, 2.0f);
+    _scene->camera.pitch -= 45.0f;
 
     MeshData mesh_data = readObjFile(obj_path);
     _scene->meshes.push_back(Mesh(mesh_data));
@@ -39,7 +40,7 @@ public:
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light
-    _scene->transforms[1].translation += glm::vec3(4.0f, 1.2f, -3.0f);
+    _scene->transforms[1].translation += glm::vec3(1.3f, 1.3f, -1.3f);
     _scene->transforms[1].scale *= 0.3f;
     _scene->materials.push_back(Material(1));
     _scene->instances.push_back(Instance(0, 1, 1));
@@ -65,7 +66,7 @@ private:
   }
 
   virtual void processInput() override {
-    float speed = 3.0f;
+    float speed = 4.0f;
     Camera& cam = _scene->camera;
 
     // Left
@@ -136,7 +137,13 @@ private:
     cam.yaw -= dx * mouse_sensitivity;
     cam.pitch += dy * mouse_sensitivity;
 
-    glm::clamp(cam.pitch, -89.0f, 89.0f);
+    if (cam.pitch > 89.0f) {
+      cam.pitch = 89.0f;
+    }
+    if (cam.pitch < -89.0f) {
+      cam.pitch = -89.0f;
+    }
+
     cam.updateVectors();
   }
 

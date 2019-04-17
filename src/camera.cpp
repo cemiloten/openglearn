@@ -9,12 +9,12 @@ Camera::Camera()
 void Camera::updateVectors() {
   float _yaw = glm::radians(yaw);
   float _pitch = glm::radians(pitch);
-  // float cos_pitch = cos(_pitch);
+
   // Calculate the new front vector.
   glm::vec3 _front;
-  _front.x = -sin(_yaw); // * cos_pitch;
+  _front.x = -sin(_yaw);
   _front.y = sin(_pitch);
-  _front.z = -cos(_yaw); // * cos_pitch;
+  _front.z = -cos(_yaw);
   front = glm::normalize(_front);
 
   // Update right and up vector from new calculation.
