@@ -1,15 +1,23 @@
 #include "camera.hpp"
 
 Camera::Camera()
-    : position(glm::vec3(0.0f, 0.0f, 0.0f)), right(glm::vec3(1.0f, 0.0f, 0.0f)),
-      up(glm::vec3(0.0f, 1.0f, 0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)),
-      world_up(glm::vec3(0.0f, 1.0f, 0.0f)), yaw(0.0f), pitch(0.0f) {}
+    : position(glm::vec3(0.0f, 0.0f, 0.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)),
+      world_up(up), pitch(0.0f), yaw(0.0f) {
+  updateVectors();
+}
 
 void Camera::updateVectors() {
-  front = glm::normalize(
-      glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
-                sin(glm::radians(pitch)),
-                sin(glm::radians(yaw)) * cos(glm::radians(pitch))));
+  float _yaw = glm::radians(yaw);
+  float _pitch = glm::radians(pitch);
+  // float cos_pitch = cos(_pitch);
+  // Calculate the new front vector.
+  glm::vec3 _front;
+  _front.x = -sin(_yaw); // * cos_pitch;
+  _front.y = sin(_pitch);
+  _front.z = -cos(_yaw); // * cos_pitch;
+  front = glm::normalize(_front);
+
+  // Update right and up vector from new calculation.
   right = glm::normalize(glm::cross(front, world_up));
   up = glm::normalize(glm::cross(right, front));
 }

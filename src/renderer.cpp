@@ -12,14 +12,14 @@ void Renderer::render(const Scene* scene) {
 
   const Camera& camera = scene->camera;
 
-  glm::mat4 view =
-      glm::translate(camera.getViewMatrix(), glm::vec3(0.0f, 0.0f, 3.0f));
+  glm::mat4 view = camera.getViewMatrix();
 
   glm::mat4 proj = glm::perspective(
       glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
 
   glm::mat4 model(1.0f);
   glm::vec3 light_pos = scene->transforms[1].translation;
+  glm::vec3 eye_pos = camera.position;
 
   for (size_t i = 0; i < scene->instances.size(); ++i) {
     const Instance& instance = scene->instances[i];
@@ -37,6 +37,8 @@ void Renderer::render(const Scene* scene) {
     shader.setMaterialUniforms(material);
     shader.setVec3("light_color", glm::vec3(1.0f));
     shader.setVec3("light_pos", light_pos);
+    shader.setVec3("eye_pos", eye_pos);
+
     shader.setMat4("model", model);
     shader.setMat4("view", view);
     shader.setMat4("projection", proj);

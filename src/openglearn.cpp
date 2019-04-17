@@ -20,6 +20,7 @@ public:
     _scene = new Scene;
 
     _scene->camera = Camera();
+    _scene->camera.position += glm::vec3(0.0f, 0.0f, 2.0f);
 
     MeshData mesh_data = readObjFile(obj_path);
     _scene->meshes.push_back(Mesh(mesh_data));
@@ -32,13 +33,14 @@ public:
     _scene->transforms.resize(2);
 
     // object
-    _scene->materials.push_back(Material(
-        0, glm::vec3(0.5f), glm::vec3(1.0f, 0.5f, 0.0f), glm::vec3(0.0f)));
+    _scene->materials.push_back(Material(0, glm::vec3(1.0f, 0.0f, 0.5f),
+                                         glm::vec3(1.0f, 0.5f, 0.0f),
+                                         glm::vec3(0.0f, 1.0f, 0.0f)));
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light
-    _scene->transforms[1].translation += glm::vec3(1.3f, 1.2f, -1.5f);
-    _scene->transforms[1].scale *= 0.4f;
+    _scene->transforms[1].translation += glm::vec3(4.0f, 1.2f, -3.0f);
+    _scene->transforms[1].scale *= 0.3f;
     _scene->materials.push_back(Material(1));
     _scene->instances.push_back(Instance(0, 1, 1));
   }
@@ -71,7 +73,8 @@ private:
       cam.position -= cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-      _scene->transforms[1].translation += glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
+      _scene->transforms[1].translation -=
+          glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
     }
 
     // Right
@@ -79,7 +82,8 @@ private:
       cam.position += cam.right * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-      _scene->transforms[1].translation -= glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
+      _scene->transforms[1].translation +=
+          glm::vec3(1.0f, 0.0f, 0.0f) * speed * delta_time;
     }
 
     // Up
@@ -87,7 +91,8 @@ private:
       cam.position += cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
-      _scene->transforms[1].translation += glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
+      _scene->transforms[1].translation -=
+          glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
     }
 
     // Down
@@ -95,7 +100,8 @@ private:
       cam.position -= cam.front * speed * delta_time;
     }
     if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-      _scene->transforms[1].translation -= glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
+      _scene->transforms[1].translation +=
+          glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
     }
 
     // View mode
@@ -112,6 +118,10 @@ private:
     if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(_window, true);
     }
+
+    if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+      printf("debug\n");
+    }
   }
 
   virtual void onCursorPos(float xpos, float ypos) override {
@@ -123,14 +133,10 @@ private:
     float mouse_sensitivity = 0.35f;
     Camera& cam = _scene->camera;
 
-    cam.yaw += dx * mouse_sensitivity;
+    cam.yaw -= dx * mouse_sensitivity;
     cam.pitch += dy * mouse_sensitivity;
-    if (cam.pitch > 89.0f) {
-      cam.pitch = 89.0f;
-    }
-    if (cam.pitch < -89.0f) {
-      cam.pitch = -89.0f;
-    }
+
+    glm::clamp(cam.pitch, -89.0f, 89.0f);
     cam.updateVectors();
   }
 
