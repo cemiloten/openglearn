@@ -8,12 +8,14 @@ struct Material {
   glm::vec3 ambient;
   glm::vec3 diffuse;
   glm::vec3 specular;
+  float shininess;
 
   Material(unsigned int _shader_id)
-      : shader_id(_shader_id), ambient(0.0f), diffuse(0.5f), specular(0.5f) {}
+      : shader_id(_shader_id), ambient(0.0f), diffuse(0.5f), specular(0.5f),
+        shininess(32.0f) {}
 
   Material(unsigned int _shader_id, glm::vec3 _ambient, glm::vec3 _diffuse,
-           glm::vec3 _specular)
+           glm::vec3 _specular, float _shininess)
       : shader_id(_shader_id), ambient(_ambient), diffuse(_diffuse),
-        specular(_specular) {}
+        specular(_specular), shininess(_shininess) {}
 };

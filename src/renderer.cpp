@@ -17,7 +17,9 @@ void Renderer::render(const Scene* scene) {
       glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
   glm::mat4 model(1.0f);
 
-  glm::vec3 light_pos = scene->transforms[1].translation;
+  glm::vec3 light_color(1.0f);
+  glm::vec3 light_world_pos(scene->transforms[1].translation);
+
 
   for (size_t i = 0; i < scene->instances.size(); ++i) {
     const Instance& instance = scene->instances[i];
@@ -37,8 +39,8 @@ void Renderer::render(const Scene* scene) {
     shader.setMat4("projection", proj);
 
     shader.setMaterialUniforms(material);
-    shader.setVec3("light_color", glm::vec3(1.0f));
-    shader.setVec3("light_world_pos", light_pos);
+    shader.setVec3("light_color", light_color);
+    shader.setVec3("light_world_pos", light_world_pos);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
     glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);

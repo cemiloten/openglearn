@@ -27,16 +27,16 @@ public:
     _scene->meshes.push_back(Mesh(mesh_data));
 
     _scene->shaders.push_back(
-        Shader("data/shaders/test.vert", "data/shaders/test.frag"));
+        Shader("data/shaders/phong.vert", "data/shaders/phong.frag"));
     _scene->shaders.push_back(
         Shader("data/shaders/light.vert", "data/shaders/light.frag"));
 
     _scene->transforms.resize(2);
 
     // object
-    _scene->materials.push_back(Material(0, glm::vec3(1.0f, 0.0f, 0.5f),
-                                         glm::vec3(1.0f, 0.5f, 0.0f),
-                                         glm::vec3(0.0f, 1.0f, 0.0f)));
+    _scene->materials.push_back(Material(0, glm::vec3(1.0f, 0.5f, 0.31f),
+                                         glm::vec3(1.0f, 0.5f, 0.31f),
+                                         glm::vec3(0.5f, 0.5f, 0.5f), 32.0f));
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light

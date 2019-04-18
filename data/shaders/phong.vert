@@ -20,6 +20,6 @@ void main() {
   frag_view_pos = vec3(view * model * vec4(pos_in, 1.0));
   light_view_pos = vec3(view * vec4(light_world_pos, 1.0));
 
-  normal = mat3(transpose(inverse(model))) * normal_in;
+  normal = mat3(transpose(inverse(view * model))) * normal_in;
   texcoord = texcoord_in;
 }

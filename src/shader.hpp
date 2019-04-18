@@ -16,6 +16,10 @@ struct Shader {
 
   inline void use() const { glUseProgram(id); }
 
+  inline void setFloat(const std::string& name, float value) const {
+    glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+  }
+
   inline void setVec3(const std::string& name, glm::vec3 value) const {
     glUniform3fv(glGetUniformLocation(id, name.c_str()), 1,
                  glm::value_ptr(value));
@@ -27,8 +31,9 @@ struct Shader {
   }
 
   inline void setMaterialUniforms(const Material& material) const {
-    setVec3("ambient", material.ambient);
-    setVec3("diffuse", material.diffuse);
-    setVec3("specular", material.specular);
+    setVec3("material.ambient", material.ambient);
+    setVec3("material.diffuse", material.diffuse);
+    setVec3("material.specular", material.specular);
+    setFloat("material.shininess", material.shininess);
   }
 };
