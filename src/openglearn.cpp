@@ -66,7 +66,7 @@ private:
   }
 
   virtual void processInput() override {
-    float speed = 4.0f;
+    float speed = 8.0f;
     Camera& cam = _scene->camera;
 
     // Left

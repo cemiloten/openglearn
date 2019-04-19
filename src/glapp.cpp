@@ -30,6 +30,8 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
     exit(1);
   }
 
+  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   glfwSetWindowUserPointer(_window, this);
   glfwSetCursorPosCallback(_window, IGLApp::onCursorPos);
   glfwSetFramebufferSizeCallback(_window, IGLApp::onFrameBufferSize);
@@ -50,7 +52,7 @@ void IGLApp::onFrameBufferSize(int width, int height) {
 }
 
 void IGLApp::onError(int error, const char* description) {
-    fprintf(stderr, "Error %d, %s\n", error, description);
+  fprintf(stderr, "Error %d, %s\n", error, description);
 }
 
 void IGLApp::onCursorPos(GLFWwindow* window, double xpos, double ypos) {
