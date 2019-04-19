@@ -34,9 +34,9 @@ public:
     _scene->transforms.resize(2);
 
     // object
-    _scene->materials.push_back(Material(0, glm::vec3(1.0f, 0.5f, 0.31f),
-                                         glm::vec3(1.0f, 0.5f, 0.31f),
-                                         glm::vec3(0.5f, 0.5f, 0.5f), 32.0f));
+    _scene->materials.push_back(Material(
+        0, glm::vec3(0.0f, 0.1f, 0.06f), glm::vec3(0.0f, 0.5098f, 0.5098f),
+        glm::vec3(0.5019f, 0.5019f, 0.5019f), 0.25 * 128.0f));
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light

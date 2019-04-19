@@ -20,7 +20,6 @@ void Renderer::render(const Scene* scene) {
   glm::vec3 light_color(1.0f);
   glm::vec3 light_world_pos(scene->transforms[1].translation);
 
-
   for (size_t i = 0; i < scene->instances.size(); ++i) {
     const Instance& instance = scene->instances[i];
 
@@ -39,7 +38,10 @@ void Renderer::render(const Scene* scene) {
     shader.setMat4("projection", proj);
 
     shader.setMaterialUniforms(material);
-    shader.setVec3("light_color", light_color);
+    shader.setVec3("light_color.ambient", glm::vec3(0.2f));
+    shader.setVec3("light_color.diffuse", glm::vec3(0.5f));
+    shader.setVec3("light_color.specular", glm::vec3(1.0f));
+
     shader.setVec3("light_world_pos", light_world_pos);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
