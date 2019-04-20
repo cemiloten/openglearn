@@ -1,21 +1,21 @@
 #pragma once
 
 #include "glm/vec3.hpp"
+#include "texture.hpp"
 
 struct Material {
-  unsigned int shader_id;
+  size_t shader_id;
+  size_t diffuse_id;
 
-  glm::vec3 ambient;
-  glm::vec3 diffuse;
   glm::vec3 specular;
   float shininess;
 
-  Material(unsigned int _shader_id)
-      : shader_id(_shader_id), ambient(0.0f), diffuse(0.5f), specular(0.5f),
+  Material(size_t _shader_id, size_t _diffuse_id)
+      : shader_id(_shader_id), diffuse_id(_diffuse_id), specular(0.5f),
         shininess(32.0f) {}
 
-  Material(unsigned int _shader_id, glm::vec3 _ambient, glm::vec3 _diffuse,
-           glm::vec3 _specular, float _shininess)
-      : shader_id(_shader_id), ambient(_ambient), diffuse(_diffuse),
-        specular(_specular), shininess(_shininess) {}
+  Material(size_t _shader_id, size_t _diffuse_id, glm::vec3 _specular,
+           float _shininess)
+      : shader_id(_shader_id), diffuse_id(_diffuse_id), specular(_specular),
+        shininess(_shininess) {}
 };

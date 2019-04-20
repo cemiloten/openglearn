@@ -31,18 +31,19 @@ public:
     _scene->shaders.push_back(
         Shader("data/shaders/light.vert", "data/shaders/light.frag"));
 
+    _scene->textures.push_back(Texture("data/textures/container2.png"));
+
     _scene->transforms.resize(2);
 
     // object
-    _scene->materials.push_back(Material(
-        0, glm::vec3(0.0f, 0.1f, 0.06f), glm::vec3(0.0f, 0.5098f, 0.5098f),
-        glm::vec3(0.5019f, 0.5019f, 0.5019f), 0.25 * 128.0f));
+    _scene->materials.push_back(
+        Material(0, 0, glm::vec3(0.5019f, 0.5019f, 0.5019f), 0.25 * 128.0f));
     _scene->instances.push_back(Instance(0, 0, 0));
 
     // light
     _scene->transforms[1].translation += glm::vec3(1.3f, 1.3f, -1.3f);
     _scene->transforms[1].scale *= 0.3f;
-    _scene->materials.push_back(Material(1));
+    _scene->materials.push_back(Material(1, 0));
     _scene->instances.push_back(Instance(0, 1, 1));
   }
 

@@ -44,6 +44,7 @@ public:
   std::vector<Transform> transforms;
   std::vector<Shader> shaders;
   std::vector<Material> materials;
+  std::vector<Texture> textures;
 
   Camera camera;
 
