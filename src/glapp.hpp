@@ -15,8 +15,8 @@ protected:
   void operator=(const IGLApp&) = delete;
 
   virtual void run() = 0;
-  virtual void update() = 0;
-  virtual void processInput() = 0;
+  virtual void update(float delta_time) = 0;
+  virtual void processInput(float delta_time) = 0;
 
   virtual void onCursorPos(float xpos, float ypos);
   virtual void onFrameBufferSize(int width, int height);

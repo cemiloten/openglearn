@@ -31,10 +31,18 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   }
 
   glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  if (glfwRawMouseMotionSupported()) {
+    printf("Raw mouse motion is supported\n");
+    glfwSetInputMode(_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+  }
 
   glfwSetWindowUserPointer(_window, this);
   glfwSetCursorPosCallback(_window, IGLApp::onCursorPos);
   glfwSetFramebufferSizeCallback(_window, IGLApp::onFrameBufferSize);
+
+  glfwSwapInterval(1);
+  glEnable(GL_DEPTH_TEST);
+  glCullFace(GL_BACK);
 }
 
 IGLApp::~IGLApp() {

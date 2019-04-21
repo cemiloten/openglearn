@@ -7,11 +7,8 @@
 enum class TextureType : unsigned short int { Diffuse, Specular, Normal };
 
 struct Texture {
-  Texture(const std::string& path);
+  Texture(const std::string& path, TextureType _type);
 
-  int width;
-  int height;
-  int bytes_per_pixel;
   unsigned int texture_object;
   TextureType type;
 

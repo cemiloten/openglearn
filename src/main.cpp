@@ -10,11 +10,7 @@ public:
   App(unsigned int width, unsigned int height, const char* obj_path)
       : IGLApp(width, height), _renderer(width, height),
         _last_mouse_pos_x(0.5f * width), _last_mouse_pos_y(0.5f * height) {
-
     glfwSetCursorPos(_window, _last_mouse_pos_x, _last_mouse_pos_y);
-    glfwSwapInterval(1);
-    glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
 
     // Initalize data
     _scene = new Scene;
@@ -31,19 +27,20 @@ public:
     _scene->shaders.push_back(
         Shader("data/shaders/light.vert", "data/shaders/light.frag"));
 
-    _scene->textures.push_back(Texture("data/textures/container2.png"));
+    _scene->textures.push_back(
+        Texture("data/textures/container2.png", TextureType::Diffuse));
+
+    _scene->textures.push_back(Texture("data/textures/container2_specular.png",
+                                       TextureType::Specular));
 
     _scene->transforms.resize(2);
-
-    // object
-    _scene->materials.push_back(
-        Material(0, 0, glm::vec3(0.5019f, 0.5019f, 0.5019f), 0.25 * 128.0f));
-    _scene->instances.push_back(Instance(0, 0, 0));
-
-    // light
     _scene->transforms[1].translation += glm::vec3(1.3f, 1.3f, -1.3f);
     _scene->transforms[1].scale *= 0.3f;
-    _scene->materials.push_back(Material(1, 0));
+
+    _scene->materials.push_back(Material(0, 0, 0));
+    _scene->materials.push_back(Material(1, 0, 0));
+
+    _scene->instances.push_back(Instance(0, 0, 0));
     _scene->instances.push_back(Instance(0, 1, 1));
   }
 
@@ -52,21 +49,20 @@ public:
   virtual void run() override {
     while (!glfwWindowShouldClose(_window)) {
       float current_time = static_cast<float>(glfwGetTime());
-      delta_time = current_time - last_time;
-      update();
+      update(current_time - last_time);
       last_time = current_time;
     }
   }
 
 private:
-  virtual void update() override {
-    processInput();
+  virtual void update(float delta_time) override {
+    processInput(delta_time);
     _renderer.render(_scene);
     glfwSwapBuffers(_window);
     glfwPollEvents();
   }
 
-  virtual void processInput() override {
+  virtual void processInput(float delta_time) override {
     float speed = 8.0f;
     Camera& cam = _scene->camera;
 
@@ -104,6 +100,16 @@ private:
     if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
       _scene->transforms[1].translation +=
           glm::vec3(0.0f, 0.0f, 1.0f) * speed * delta_time;
+    }
+
+    if (glfwGetKey(_window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+      _scene->transforms[1].translation +=
+          glm::vec3(0.0f, 1.0f, 0.0f) * speed * delta_time;
+    }
+
+    if (glfwGetKey(_window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
+      _scene->transforms[1].translation -=
+          glm::vec3(0.0f, 1.0f, 0.0f) * speed * delta_time;
     }
 
     // View mode
@@ -152,7 +158,6 @@ private:
   Scene* _scene;
   Renderer _renderer;
 
-  float delta_time;
   float last_time;
   float _last_mouse_pos_x;
   float _last_mouse_pos_y;

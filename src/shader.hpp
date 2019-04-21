@@ -16,6 +16,10 @@ struct Shader {
 
   inline void use() const { glUseProgram(id); }
 
+  inline void setInt(const std::string& name, int value) const {
+    glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+  }
+
   inline void setFloat(const std::string& name, float value) const {
     glUniform1f(glGetUniformLocation(id, name.c_str()), value);
   }
@@ -28,12 +32,5 @@ struct Shader {
   inline void setMat4(const std::string& name, glm::mat4 value) const {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE,
                        glm::value_ptr(value));
-  }
-
-  inline void setMaterialUniforms(const Material& material) const {
-    setVec3("material.ambient", material.ambient);
-    setVec3("material.diffuse", material.diffuse);
-    setVec3("material.specular", material.specular);
-    setFloat("material.shininess", material.shininess);
   }
 };
