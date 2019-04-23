@@ -1,9 +1,11 @@
 #include <cstdlib>
 
 #include "glapp.hpp"
+#include "imgui/imgui.h"
 #include "obj_importer.hpp"
 #include "renderer.hpp"
 #include "scene.hpp"
+
 
 class App : IGLApp {
 public:
@@ -57,7 +59,15 @@ public:
 private:
   virtual void update(float delta_time) override {
     processInput(delta_time);
+
+    float f = 0.0f;
+    ImGui::Text("Hello world %d", 123);
+    if (ImGui::Button("Save")) {
+      printf("loooooool\n");
+    }
+    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
     _renderer.render(_scene);
+
     glfwSwapBuffers(_window);
     glfwPollEvents();
   }

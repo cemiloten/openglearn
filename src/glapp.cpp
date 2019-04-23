@@ -2,12 +2,11 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
 #include "glapp.hpp"
 
 IGLApp::IGLApp(unsigned int width, unsigned int height) {
-  int major, minor, rev;
-  glfwGetVersion(&major, &minor, &rev);
-  printf("GLFW version: %d.%d.%d\n", major, minor, rev);
   glfwSetErrorCallback(IGLApp::onError);
 
   if (!glfwInit()) {
@@ -18,29 +17,47 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if defined __APPLE__
+  const char* glsl_version = "#version 150";
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#else
+  const char* glsl_version = "#version 130";
 #endif
 
   _window = glfwCreateWindow(width, height, "OpenGL", nullptr, nullptr);
   assert(_window != nullptr && "Could not create GLFW window");
   glfwMakeContextCurrent(_window);
+  glfwSwapInterval(1); // vsync
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     printf("Failed to initialize GLAD function pointers\n");
     exit(1);
   }
 
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Keyboard controls
+  // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Gamepad controls
+
+  ImGui::StyleColorsDark();
+
+  ImGui_ImplGlfw_InitForOpenGL(_window, true);
+  ImGui_ImplOpenGL3_Init(glsl_version);
+
+
+  // Disable mouse cursor (enabled virtually)
   glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   if (glfwRawMouseMotionSupported()) {
     printf("Raw mouse motion is supported\n");
     glfwSetInputMode(_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
   }
 
+  // Register callbacks
   glfwSetWindowUserPointer(_window, this);
   glfwSetCursorPosCallback(_window, IGLApp::onCursorPos);
   glfwSetFramebufferSizeCallback(_window, IGLApp::onFrameBufferSize);
 
-  glfwSwapInterval(1);
   glEnable(GL_DEPTH_TEST);
   glCullFace(GL_BACK);
 }

@@ -8,7 +8,9 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 
 file(GLOB SOURCES
-    ${SRC_DIR}/*.cpp)
+    ${SRC_DIR}/*.cpp
+    ${LIB_DIR}/imgui/*.cpp
+)
 
 add_executable(openglearn ${SOURCES})
 target_include_directories(openglearn PRIVATE ${SRC_DIR})
@@ -18,9 +20,9 @@ set_property(TARGET openglearn PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET openglearn PROPERTY CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(TARGET openglearn PROPERTY CMAKE_BUILD_TYPE Debug)
 if (MSVC)
-target_compile_options(openglearn PRIVATE /W4)
+    target_compile_options(openglearn PRIVATE /W4)
 else()
-target_compile_options(openglearn PRIVATE -Wall -Wextra -Werror)
+    target_compile_options(openglearn PRIVATE -Wall -Wextra -Werror)
 endif()
 
 
