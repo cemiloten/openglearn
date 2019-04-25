@@ -6,7 +6,7 @@
 class Renderer {
 public:
   Renderer(unsigned int width, unsigned int height);
-  void render(const Scene* scene);
+  void draw(const Scene* scene);
 
 private:
   unsigned int _width;

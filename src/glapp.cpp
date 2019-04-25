@@ -2,9 +2,11 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "glapp.hpp"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
-#include "glapp.hpp"
+#include "imgui/imgui_impl_opengl3.h"
+
 
 IGLApp::IGLApp(unsigned int width, unsigned int height) {
   glfwSetErrorCallback(IGLApp::onError);
@@ -36,7 +38,8 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGuiIO& io = ImGui::GetIO();
+  (void)io;
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Keyboard controls
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Gamepad controls
 
@@ -45,13 +48,12 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   ImGui_ImplGlfw_InitForOpenGL(_window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-
-  // Disable mouse cursor (enabled virtually)
-  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  if (glfwRawMouseMotionSupported()) {
-    printf("Raw mouse motion is supported\n");
-    glfwSetInputMode(_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-  }
+  // Disable mouse cursor (still enabled virtually)
+  // glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  // if (glfwRawMouseMotionSupported()) {
+  //   printf("Raw mouse motion is supported\n");
+  //   glfwSetInputMode(_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+  // }
 
   // Register callbacks
   glfwSetWindowUserPointer(_window, this);

@@ -7,6 +7,7 @@ struct Material {
   size_t shader_id;
   size_t diffuse_id;
   size_t specular_id;
+  size_t normal_id;
 
   float shininess;
 

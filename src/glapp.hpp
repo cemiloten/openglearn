@@ -5,6 +5,8 @@
 #include "GLFW/glfw3.h"
 // clang-format on
 
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+
 class IGLApp {
 protected:
   GLFWwindow* _window;

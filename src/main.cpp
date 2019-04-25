@@ -2,10 +2,11 @@
 
 #include "glapp.hpp"
 #include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 #include "obj_importer.hpp"
 #include "renderer.hpp"
 #include "scene.hpp"
-
 
 class App : IGLApp {
 public:
@@ -58,18 +59,23 @@ public:
 
 private:
   virtual void update(float delta_time) override {
+    glfwPollEvents();
     processInput(delta_time);
 
-    float f = 0.0f;
-    ImGui::Text("Hello world %d", 123);
-    if (ImGui::Button("Save")) {
-      printf("loooooool\n");
-    }
-    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-    _renderer.render(_scene);
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+
+    glClearColor(0.1f, 0.15f, 0.20f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _renderer.draw(_scene);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(_window);
-    glfwPollEvents();
   }
 
   virtual void processInput(float delta_time) override {

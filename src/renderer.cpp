@@ -6,10 +6,7 @@
 Renderer::Renderer(unsigned int width, unsigned int height)
     : _width(width), _height(height) {}
 
-void Renderer::render(const Scene* scene) {
-  glClearColor(0.1f, 0.15f, 0.20f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+void Renderer::draw(const Scene* scene) {
   const Camera& camera = scene->camera;
 
   glm::mat4 view = camera.getViewMatrix();
