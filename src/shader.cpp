@@ -1,35 +1,13 @@
-#include <fstream>
 #include <iostream>
-#include <sstream>
 
 #include "shader.hpp"
+#include "utils.hpp"
 
 Shader::Shader(const char* vert_path, const char* frag_path) {
-  std::string vert_source_;
-  std::string frag_source_;
-  std::ifstream vert_shader_file;
-  std::ifstream frag_shader_file;
-  vert_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  frag_shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  try {
-    // open files
-    vert_shader_file.open(vert_path);
-    frag_shader_file.open(frag_path);
-    std::stringstream vert_shader_stream;
-    std::stringstream frag_shader_stream;
-    vert_shader_stream << vert_shader_file.rdbuf();
-    frag_shader_stream << frag_shader_file.rdbuf();
-    vert_shader_file.close();
-    frag_shader_file.close();
-    // convert stream into string
-    vert_source_ = vert_shader_stream.str();
-    frag_source_ = frag_shader_stream.str();
-  } catch (std::ifstream::failure e) {
-    std::cout << "ERROR: Shader file not successfully read" << std::endl;
-  }
-
-  const char* vert_source = vert_source_.c_str();
-  const char* frag_source = frag_source_.c_str();
+  const char* vert_source = utils::fileContentsToString(vert_path).c_str();
+  std::cout << vert_source << "\n";
+  const char* frag_source = utils::fileContentsToString(frag_path).c_str();
+  std::cout << frag_source << "\n";
   int success;
   char infoLog[512];
 

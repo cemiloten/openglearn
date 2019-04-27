@@ -1,5 +1,7 @@
 #include <cstdlib>
+#include <iostream>
 
+#include "json.hpp"
 #include "glapp.hpp"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -58,6 +60,14 @@ public:
   }
 
 private:
+  void loadScene(const std::string& path) {
+    if (_scene != nullptr) {
+      delete _scene;
+      _scene = new Scene;
+    }
+    (void)path;
+  }
+
   virtual void update(float delta_time) override {
     glfwPollEvents();
     processInput(delta_time);

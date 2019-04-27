@@ -1,0 +1,46 @@
+{
+  "instances": [
+    {
+      "model": 0,
+      "material": 0,
+      "tranforms": {
+        "translation": [
+          0.0,
+          1.0,
+          -1.0
+        ],
+        "rotation": [
+          0.0,
+          1.0,
+          -1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "models": [
+    "data/models/cube.obj"
+  ],
+  "materials": [
+    {
+      "diffuse": "data/textures/container2.png",
+      "specular": "data/textures/container2_specular",
+      "shininess": 32.0,
+      "shader": 0
+    }
+  ],
+  "shaders": [
+    {
+      "vertex": "data/shaders/phong.vert",
+      "frag": "data/shaders/phong.frag"
+    },
+    {
+      "vertex": "data/shaders/light.vert",
+      "frag": "data/shaders/light.frag"
+    }
+  ]
+}
