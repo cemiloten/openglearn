@@ -3,12 +3,8 @@
 #include "scene.hpp"
 #include "shader.hpp"
 
-class Renderer {
-public:
-  Renderer(unsigned int width, unsigned int height);
-  void draw(const Scene* scene);
+namespace renderer {
 
-private:
-  unsigned int _width;
-  unsigned int _height;
-};
+void draw(const Scene* scene);
+
+}

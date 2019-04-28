@@ -1,88 +1,45 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "json.hpp"
-#include "glapp.hpp"
+#include "app.hpp"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include "obj_importer.hpp"
+#include "json.hpp"
 #include "renderer.hpp"
-#include "scene.hpp"
 
-class App : IGLApp {
+// TODO:
+// read scene file
+// save image
+// from real time view, launch ray tracing process
+
+class App : public IApp {
 public:
-  App(unsigned int width, unsigned int height, const char* obj_path)
-      : IGLApp(width, height), _renderer(width, height),
-        _last_mouse_pos_x(0.5f * width), _last_mouse_pos_y(0.5f * height) {
+  App(const char* launch_file_path) : IApp(launch_file_path) {
+
+    _last_mouse_pos_x = 0.5f * _width;
+    _last_mouse_pos_y = 0.5f * _height;
     glfwSetCursorPos(_window, _last_mouse_pos_x, _last_mouse_pos_y);
-
-    // Initalize data
-    _scene = new Scene;
-
-    _scene->camera = Camera();
-    _scene->camera.position += glm::vec3(0.0f, 2.0f, 2.0f);
-    _scene->camera.pitch -= 45.0f;
-
-    MeshData mesh_data = readObjFile(obj_path);
-    _scene->meshes.push_back(Mesh(mesh_data));
-
-    _scene->shaders.push_back(
-        Shader("data/shaders/phong.vert", "data/shaders/phong.frag"));
-    _scene->shaders.push_back(
-        Shader("data/shaders/light.vert", "data/shaders/light.frag"));
-
-    _scene->textures.push_back(
-        Texture("data/textures/container2.png", TextureType::Diffuse));
-
-    _scene->textures.push_back(Texture("data/textures/container2_specular.png",
-                                       TextureType::Specular));
-
-    _scene->transforms.resize(2);
-    _scene->transforms[1].translation += glm::vec3(1.3f, 1.3f, -1.3f);
-    _scene->transforms[1].scale *= 0.3f;
-
-    _scene->materials.push_back(Material(0, 0, 0));
-    _scene->materials.push_back(Material(1, 0, 0));
-
-    _scene->instances.push_back(Instance(0, 0, 0));
-    _scene->instances.push_back(Instance(0, 1, 1));
   }
 
-  ~App() { delete _scene; }
+  virtual void onStart() override {}
 
-  virtual void run() override {
-    while (!glfwWindowShouldClose(_window)) {
-      float current_time = static_cast<float>(glfwGetTime());
-      update(current_time - last_time);
-      last_time = current_time;
-    }
-  }
-
-private:
-  void loadScene(const std::string& path) {
-    if (_scene != nullptr) {
-      delete _scene;
-      _scene = new Scene;
-    }
-    (void)path;
-  }
-
-  virtual void update(float delta_time) override {
-    glfwPollEvents();
-    processInput(delta_time);
+  virtual void onUpdate(float dt) override {
+    (void)dt;
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
 
     ImGui::Render();
 
     glClearColor(0.1f, 0.15f, 0.20f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _renderer.draw(_scene);
+
+    renderer::draw(_scene);
+
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(_window);
@@ -152,10 +109,6 @@ private:
     if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(_window, true);
     }
-
-    if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-      printf("debug\n");
-    }
   }
 
   virtual void onCursorPos(float xpos, float ypos) override {
@@ -181,32 +134,19 @@ private:
   }
 
 private:
-  Scene* _scene;
-  Renderer _renderer;
-
-  float last_time;
   float _last_mouse_pos_x;
   float _last_mouse_pos_y;
 };
 
 int main(int argc, const char* argv[]) {
-  unsigned int w = 640;
-  unsigned int h = 480;
-
-  if (argc == 1) {
-    App app(w, h, "data/models/cube.obj");
-    app.run();
-  } else if (argc == 2) {
-    App app(w, h, argv[1]);
-    app.run();
-  } else if (argc == 4) {
-    w = atoi(argv[2]);
-    h = atoi(argv[3]);
-    App app(w, h, argv[1]);
-    app.run();
-  } else {
-    printf("Usage: obj file path || obj file path, width, height\n");
+  if (argc != 2) {
+    fprintf(stderr, "Usage: [launch_file.json]");
     return 1;
   }
+
+  const char* launch_filepath = argv[1];
+  App app(launch_filepath);
+  app.start();
+
   return 0;
 }

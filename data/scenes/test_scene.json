@@ -1,9 +1,38 @@
 {
+  "camera": {
+    "position": [
+      0.0,
+      0.0,
+      -3.0
+    ],
+    "right": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "up": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "front": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "world_up": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "pitch": 0.0,
+    "yaw": 0.0
+  },
   "instances": [
     {
       "model": 0,
       "material": 0,
-      "tranforms": {
+      "tranform": {
         "translation": [
           0.0,
           1.0,
@@ -23,6 +52,13 @@
     }
   ],
   "models": [
+    "data/models/cube.obj",
+    "data/models/cube.obj",
+    "data/models/cube.obj",
+    "data/models/cube.obj",
+    "data/models/cube.obj",
+    "data/models/cube.obj",
+    "data/models/cube.obj",
     "data/models/cube.obj"
   ],
   "materials": [

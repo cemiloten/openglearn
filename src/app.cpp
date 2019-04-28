@@ -2,14 +2,25 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "glapp.hpp"
+#include "app.hpp"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "utils.hpp"
+#include "scene_loader.hpp"
 
+using json = nlohmann::json;
 
-IGLApp::IGLApp(unsigned int width, unsigned int height) {
-  glfwSetErrorCallback(IGLApp::onError);
+IApp::IApp(const char* launch_file_path) {
+  auto js = utils::jsonFromFile(launch_file_path);
+
+  std::string scene_file_path = js["scene"].get<std::string>();
+  _scene = scene_loader::load(scene_file_path);
+
+  _width = js["width"].get<unsigned int>();
+  _height = js["height"].get<unsigned int>();
+
+  glfwSetErrorCallback(IApp::onError);
 
   if (!glfwInit()) {
     printf("Failed to initialize GLFW\n");
@@ -25,7 +36,7 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
   const char* glsl_version = "#version 130";
 #endif
 
-  _window = glfwCreateWindow(width, height, "OpenGL", nullptr, nullptr);
+  _window = glfwCreateWindow(_width, _height, "OpenGL", nullptr, nullptr);
   assert(_window != nullptr && "Could not create GLFW window");
   glfwMakeContextCurrent(_window);
   glfwSwapInterval(1); // vsync
@@ -57,37 +68,54 @@ IGLApp::IGLApp(unsigned int width, unsigned int height) {
 
   // Register callbacks
   glfwSetWindowUserPointer(_window, this);
-  glfwSetCursorPosCallback(_window, IGLApp::onCursorPos);
-  glfwSetFramebufferSizeCallback(_window, IGLApp::onFrameBufferSize);
+  glfwSetCursorPosCallback(_window, IApp::onCursorPos);
+  glfwSetFramebufferSizeCallback(_window, IApp::onFrameBufferSize);
 
   glEnable(GL_DEPTH_TEST);
   glCullFace(GL_BACK);
 }
 
-IGLApp::~IGLApp() {
+IApp::~IApp() {
+  delete _scene;
   glfwDestroyWindow(_window);
   glfwTerminate();
 }
 
-void IGLApp::onCursorPos(float xpos, float ypos) {
+void IApp::start() {
+  while (!glfwWindowShouldClose(_window)) {
+    update();
+  }
+}
+
+void IApp::update() {
+  float current_time = static_cast<float>(glfwGetTime());
+  _delta_time = current_time - _last_time;
+  _last_time = current_time;
+
+  glfwPollEvents();
+  processInput(_delta_time);
+  onUpdate(_delta_time);
+}
+
+void IApp::onCursorPos(float xpos, float ypos) {
   (void)xpos;
   (void)ypos;
 }
 
-void IGLApp::onFrameBufferSize(int width, int height) {
+void IApp::onFrameBufferSize(int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-void IGLApp::onError(int error, const char* description) {
+void IApp::onError(int error, const char* description) {
   fprintf(stderr, "Error %d, %s\n", error, description);
 }
 
-void IGLApp::onCursorPos(GLFWwindow* window, double xpos, double ypos) {
-  IGLApp* app = static_cast<IGLApp*>(glfwGetWindowUserPointer(window));
+void IApp::onCursorPos(GLFWwindow* window, double xpos, double ypos) {
+  IApp* app = static_cast<IApp*>(glfwGetWindowUserPointer(window));
   app->onCursorPos(static_cast<float>(xpos), static_cast<float>(ypos));
 }
 
-void IGLApp::onFrameBufferSize(GLFWwindow* window, int width, int height) {
-  IGLApp* app = static_cast<IGLApp*>(glfwGetWindowUserPointer(window));
+void IApp::onFrameBufferSize(GLFWwindow* window, int width, int height) {
+  IApp* app = static_cast<IApp*>(glfwGetWindowUserPointer(window));
   app->onFrameBufferSize(width, height);
 }

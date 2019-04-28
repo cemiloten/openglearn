@@ -3,15 +3,16 @@
 #include "glad/glad.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-Renderer::Renderer(unsigned int width, unsigned int height)
-    : _width(width), _height(height) {}
+namespace renderer {
 
-void Renderer::draw(const Scene* scene) {
+void draw(const Scene* scene) {
   const Camera& camera = scene->camera;
 
   glm::mat4 view = camera.getViewMatrix();
   glm::mat4 proj = glm::perspective(
-      glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
+      glm::radians(45.0f), 800 / static_cast<float>(800), 0.1f, 100.0f);
+      // glm::radians(45.0f), _width / static_cast<float>(_height), 0.1f, 100.0f);
+
   glm::mat4 model(1.0f);
 
   glm::vec3 light_color(1.0f);
@@ -53,4 +54,6 @@ void Renderer::draw(const Scene* scene) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
     glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
   }
+}
+
 }
