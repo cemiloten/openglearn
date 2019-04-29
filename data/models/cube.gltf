@@ -1,0 +1,110 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 36,
+      "normalized": false,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 24,
+      "max": [
+        -1.596310019493103,
+        1.0947129726409912,
+        1.232409954071045
+      ],
+      "min": [
+        -3.5963099002838135,
+        -0.9052870273590088,
+        -0.7675899863243103
+      ],
+      "normalized": false,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 12,
+      "componentType": 5126,
+      "count": 24,
+      "normalized": false,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 24,
+      "componentType": 5126,
+      "count": 24,
+      "normalized": false,
+      "type": "VEC2"
+    }
+  ],
+  "asset": {
+    "generator": "Sketchfab",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 144,
+      "target": 34963
+    },
+    {
+      "buffer": 1,
+      "byteLength": 768,
+      "byteStride": 32,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 144,
+      "uri": "cube.bin"
+    },
+    {
+      "byteLength": 768,
+      "uri": "cube0.bin"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 2,
+            "POSITION": 1,
+            "TEXCOORD_0": 3
+          },
+          "indices": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ]
+    },
+    {
+      "mesh": 0,
+      "translation": [
+        2.5963099002838135,
+        -0.09471297264099121,
+        -0.2324100136756897
+      ]
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Clean_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

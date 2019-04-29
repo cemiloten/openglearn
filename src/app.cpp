@@ -6,20 +6,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include "utils.hpp"
-#include "scene_loader.hpp"
 
-using json = nlohmann::json;
-
-IApp::IApp(const char* launch_file_path) {
-  auto js = utils::jsonFromFile(launch_file_path);
-
-  std::string scene_file_path = js["scene"].get<std::string>();
-  _scene = scene_loader::load(scene_file_path);
-
-  _width = js["width"].get<unsigned int>();
-  _height = js["height"].get<unsigned int>();
-
+IApp::IApp(unsigned int w, unsigned int h) : _width(w), _height(h) {
   glfwSetErrorCallback(IApp::onError);
 
   if (!glfwInit()) {
@@ -76,12 +64,11 @@ IApp::IApp(const char* launch_file_path) {
 }
 
 IApp::~IApp() {
-  delete _scene;
   glfwDestroyWindow(_window);
   glfwTerminate();
 }
 
-void IApp::start() {
+void IApp::run() {
   while (!glfwWindowShouldClose(_window)) {
     update();
   }
@@ -93,7 +80,7 @@ void IApp::update() {
   _last_time = current_time;
 
   glfwPollEvents();
-  processInput(_delta_time);
+  processInput();
   onUpdate(_delta_time);
 }
 

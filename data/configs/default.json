@@ -1,5 +1,5 @@
 {
   "width": 640,
   "height": 480,
-  "scene": "scenes/test_scene.json"
+  "gltf_model": "data/cube.gltf"
 }

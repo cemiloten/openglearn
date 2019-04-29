@@ -3,7 +3,24 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-Texture::Texture(const std::string& path, TextureType _type) : type(_type) {
+Texture::Texture(const std::string& path, TextureType _type) : Texture(path) {
+  type = _type;
+}
+
+Texture::Texture(const std::string& path, const std::string& _type)
+    : Texture(path) {
+  if (_type == "diffuse") {
+    type = TextureType::Diffuse;
+  } else if (_type == "specular") {
+    type = TextureType::Specular;
+  } else if (_type == "normal") {
+    type = TextureType::Normal;
+  } else {
+    type = TextureType::None;
+  }
+}
+
+Texture::Texture(const std::string& path) {
   glGenTextures(1, &texture_object);
   glBindTexture(GL_TEXTURE_2D, texture_object);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

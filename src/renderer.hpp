@@ -1,10 +1,10 @@
 #pragma once
 
 #include "scene.hpp"
-#include "shader.hpp"
+#include "tiny_gltf.h"
 
 namespace renderer {
 
-void draw(const Scene* scene);
+void drawModel(tinygltf::Model& model);
 
 }

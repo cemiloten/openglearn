@@ -9,16 +9,16 @@
 #include "transform.hpp"
 
 struct Handle {
-  unsigned short int id;
+  unsigned int id;
 
   Handle() : id(invalid_id) {}
-  Handle(unsigned short int _id) : id(_id) {}
+  Handle(unsigned int _id) : id(_id) {}
 
   inline bool isValid() { return id == invalid_id; }
 
 private:
   const static unsigned int invalid_id =
-      std::numeric_limits<unsigned short int>::max();
+      std::numeric_limits<unsigned int>::max();
 };
 
 struct Instance {
