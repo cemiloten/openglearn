@@ -3,41 +3,20 @@
 #include "shader.hpp"
 #include "utils.hpp"
 
-Shader::Shader(const char* vert_path, const char* frag_path) {
-  const char* vert_source = utils::fileToString(vert_path).c_str();
-  const char* frag_source = utils::fileToString(frag_path).c_str();
+Shader::Shader(ShaderType::Enum type, const char* source_filename) {
+  const char* source = utils::fileToString(source_filename).c_str();
 
-  int success;
-  char infoLog[512];
+  int success = 0;
+  char info_log[512];
 
-  unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex, 1, &vert_source, NULL);
-  glCompileShader(vertex);
-  glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+  id = glCreateShader(type);
+  glShaderSource(id, 1, &source, NULL);
+  glCompileShader(id);
+  glGetShaderiv(id, GL_COMPILE_STATUS, &success);
   if (!success) {
-    glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-    fprintf(stderr, "ERROR: Vertex shader compilation failed\n%s\n", infoLog);
+    glGetShaderInfoLog(id, 512, NULL, info_log);
+    std::cerr << "ERROR: " << ShaderType::toString(type)
+              << " shader compilation failed\n"
+              << info_log << std::endl;
   }
-
-  unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment, 1, &frag_source, NULL);
-  glCompileShader(fragment);
-  glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-    fprintf(stderr, "ERROR: Fragment shader compilation failed\n%s\n", infoLog);
-  }
-
-  id = glCreateProgram();
-  glAttachShader(id, vertex);
-  glAttachShader(id, fragment);
-  glLinkProgram(id);
-  glGetProgramiv(id, GL_LINK_STATUS, &success);
-  if (!success) {
-    glGetProgramInfoLog(id, 512, NULL, infoLog);
-    fprintf(stderr, "ERROR: Shader program linking failed\n%s\n", infoLog);
-  }
-
-  glDeleteShader(vertex);
-  glDeleteShader(fragment);
 }
