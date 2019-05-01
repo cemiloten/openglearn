@@ -22,9 +22,8 @@ struct MeshData {
   std::vector<Vertex> vertices;
   std::vector<unsigned int> indices;
 
-  MeshData();
-  MeshData(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices)
-      : vertices(_vertices), indices(_indices) {}
+  // MeshData(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices)
+  //     : vertices(_vertices), indices(_indices) {}
 };
 
 struct Mesh {
@@ -35,9 +34,11 @@ struct Mesh {
   unsigned int index_count;
   unsigned int vertex_count;
 
-  Mesh();
-  ~Mesh();
-  Mesh(const MeshData& data);
+  MeshData* mesh_data;
+
+  // Mesh();
+  // ~Mesh() {};
+  // Mesh(const MeshData& data);
 };
 
 union Triangle {
