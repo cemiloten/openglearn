@@ -2,14 +2,13 @@
 
 #include "glm/glm.hpp"
 #include "gltf_loader.hpp"
-#include "json.hpp"
-#include "utils.hpp"
+#include "mesh.hpp"
 
 using json = nlohmann::json;
 
 namespace gltf_loader {
 
-bool loadModel(const char* filename, std::vector<Mesh>* meshes) {
+bool loadModel(const char* filename) {
   tinygltf::Model model;
   tinygltf::TinyGLTF loader;
   std::string err;
@@ -30,51 +29,45 @@ bool loadModel(const char* filename, std::vector<Mesh>* meshes) {
     std::cout << "Loaded glTF: " << filename << std::endl;
   }
 
+  std::vector<Mesh> meshes(model.meshes.size());
   for (const auto& gltf_mesh : model.meshes) {
-    MeshData mesh_data;
-    Mesh mesh;
-    // glm::vec3 min;
-    // glm::vec3 max;
+    VertexBuffer vertex_buffer;
+    std::vector<unsigned int> index_buffer;
 
-    for (const auto& mesh_primitive : gltf_mesh.primitives) {
+    for (const auto& primitive : gltf_mesh.primitives) {
+      // Copy index buffer data into our mesh
+      const auto& index_buffer_view = model.bufferViews[primitive.indices];
+      const auto& gltf_index_buffer = model.buffers[index_buffer_view.buffer];
 
-      const auto& indices_accessor = model.accessors[mesh_primitive.indices];
-      const auto& buffer_view = model.bufferViews[indices_accessor.bufferView];
-      const auto& buffer = model.buffers[buffer_view.buffer];
-      const auto data_address = buffer.data.data() + buffer_view.byteOffset +
-                                indices_accessor.byteOffset;
-      const auto byte_stride = indices_accessor.ByteStride(buffer_view);
-      if (byte_stride < 0) {
-        std::cerr << "Invalid byte stride in buffer view" << std::endl;
-        return false;
-      }
+      index_buffer = copyBufferData<unsigned int>(gltf_index_buffer);
 
-      if (indices_accessor.componentType !=
-          TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-        std::cerr << "Only unsigned int is supported for now." << std::endl;
-        return false;
-      }
-
-      BufferReader buffer_reader(data_address, indices_accessor.count,
-                                 byte_stride);
-
-      if (mesh_primitive.mode != TINYGLTF_MODE_TRIANGLES) {
-        std::cerr << "Only triangles mode is supported for now." << std::endl;
-        return false;
-      }
-
-      for (const auto& attribute : mesh_primitive.attributes) {
-        if (attribute.first == "POSITION") {
-        } else if (attribute.first == "NORMAL") {
-        } else if (attribute.first == "TEXCOORD_0") {
-        } else {
-          // error
+      // copy vertices into our mesh vertices
+      for (const auto& attribute : primitive.attributes) {
+        Attribute::Type type = Attribute::toType(attribute.first.c_str());
+        if (type == Attribute::Type::None) {
+          // error, not supported type
+          exit(55);
         }
+
+        // TODO: read this properly
+        Attribute attr;
+        attr.type = type;
+        attr.element_count =
+        attr.location = attribute.second;
       }
     }
+    meshes.push_back(std::move(my_mesh));
   }
 
   return false;
+}
+
+template <typename T>
+std::vector<T> copyBufferData(const tinygltf::Buffer& buffer) {
+  size_t byte_size = buffer.data.size();
+  std::vector<T> result = std::vector<T>(byte_size / sizeof(T));
+  memcpy(result.data(), buffer.data.data(), byte_size);
+  return result;
 }
 
 } // namespace gltf_loader
