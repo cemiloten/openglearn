@@ -43,23 +43,39 @@ bool loadModel(const char* filename) {
 
       // copy vertices into our mesh vertices
       for (const auto& attribute : primitive.attributes) {
-        Attribute::Type type = Attribute::toType(attribute.first.c_str());
-        if (type == Attribute::Type::None) {
+        AttributeType type = Attribute::toType(attribute.first.c_str());
+        if (type == AttributeType::None) {
           // error, not supported type
           exit(55);
         }
 
+        tinygltf::Accessor accessor = model.accessors[attribute.second];
+
         // TODO: read this properly
         Attribute attr;
         attr.type = type;
-        attr.element_count =
+        attr.element_count = // VEC3 or VEC2 to type
+            attr.byte_size = attr.offset = accessor.byteOffset;
         attr.location = attribute.second;
       }
     }
-    meshes.push_back(std::move(my_mesh));
+    meshes.push_back(Mesh(vertex_buffer, index_buffer));
   }
 
   return false;
+}
+
+size_t countFromType(const char* type) {
+  if (!strcmp("VEC2", type)) {
+    return TINYGLTF_TYPE_VEC2;
+  }
+  if (!strcmp("VEC3", type)) {
+    return TINYGLTF_TYPE_VEC3;
+  }
+  if (!strcmp("VEC4", type)) {
+    return TINYGLTF_TYPE_VEC4;
+  }
+  return -1;
 }
 
 template <typename T>

@@ -6,16 +6,16 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
-struct Attribute {
-  enum Type { None, Position, Normal, Texcoord };
+enum class AttributeType { None, Position, Normal, Texcoord };
 
+struct Attribute {
   size_t byte_size;
   size_t element_count;
   size_t offset;
   int location;
-  Type type;
+  AttributeType type;
 
-  static Type toType(const char* attribute);
+  static AttributeType toType(const char* attribute);
 };
 
 struct VertexBuffer {

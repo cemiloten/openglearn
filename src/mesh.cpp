@@ -1,16 +1,16 @@
 #include "mesh.hpp"
 
-Attribute::Type Attribute::toType(const char* attribute) {
+AttributeType Attribute::toType(const char* attribute) {
   if (!strcmp("POSITION", attribute)) {
-    return Attribute::Type::Position;
+    return AttributeType::Position;
   }
   if (!strcmp("NORMAL", attribute)) {
-    return Attribute::Type::Normal;
+    return AttributeType::Normal;
   }
   if (!strcmp("TEXCOORD_0", attribute)) {
-    return Attribute::Type::Texcoord;
+    return AttributeType::Texcoord;
   }
-  return Attribute::Type::None;
+  return AttributeType::None;
 }
 
 Mesh::Mesh(const VertexBuffer& vtx_buffer,
